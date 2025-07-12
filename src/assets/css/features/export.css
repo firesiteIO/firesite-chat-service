@@ -1,0 +1,102 @@
+/* Export Menu and Copy Button Styles */
+
+/* Export Menu Styles */
+.chat-wrapper {
+  position: relative;
+}
+
+.export-menu-container,
+#export-menu-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 100;
+}
+
+.export-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.export-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.export-menu-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  min-width: 150px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+/* Message Copy Button */
+.message-copy-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 12px;
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0;
+  z-index: 10;
+}
+
+.chat-message.assistant:hover .message-copy-button {
+  opacity: 1;
+}
+
+.message-copy-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.message-copy-button:active {
+  transform: translateY(0);
+}
+
+/* Hide copy buttons during streaming */
+.streaming .copy-button,
+.streaming .message-copy-button {
+  display: none !important;
+}
+
+/* Response Copy Button */
+.response-copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: #ddd;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.message-content:hover .response-copy-btn {
+  opacity: 0.7;
+}
+
+.response-copy-btn:hover {
+  opacity: 1 !important;
+}

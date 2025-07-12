@@ -1,0 +1,164 @@
+{
+  "sample_mmco_kanban": {
+    "project": {
+      "name": "Firesite Kanban System",
+      "type": "task_management",
+      "phase": "development",
+      "priority": "high",
+      "deadline": "2025-08-01"
+    },
+    "task": {
+      "current_focus": "AI-assisted task creation and management",
+      "requirements": [
+        "Real-time task updates",
+        "AI-generated task suggestions", 
+        "Claude Code SDK integration",
+        "Context-aware workflows"
+      ],
+      "constraints": [
+        "Zero re-render architecture",
+        "SOLID principles",
+        "Service-first design",
+        "MCP server integration"
+      ]
+    },
+    "context": {
+      "integration_points": [
+        "MCP Max server for context awareness",
+        "Claude Code SDK for AI assistance",
+        "Chat service for communication",
+        "Docker containers for security"
+      ],
+      "dependencies": [
+        "firesite-mcp-max",
+        "firesite-chat-service", 
+        "context-manager-service",
+        "universal-streaming-parser"
+      ]
+    },
+    "conversations": {
+      "current": {
+        "focus": "Integration testing and context validation",
+        "messages": []
+      }
+    },
+    "metadata": {
+      "created": "2025-07-06",
+      "version": "1.0.0",
+      "last_updated": "2025-07-06T12:00:00Z"
+    }
+  },
+
+  "sample_mmco_testing": {
+    "project": {
+      "name": "Context System Testing",
+      "type": "validation",
+      "phase": "testing",
+      "priority": "critical"
+    },
+    "task": {
+      "current_focus": "Validate MMCO/UACP/PACP integration",
+      "requirements": [
+        "Test context persistence across server switches",
+        "Verify AI mode behavior differences",
+        "Test context mashups and combinations",
+        "Validate JSON schema checking"
+      ]
+    },
+    "context": {
+      "test_scenarios": [
+        "Server switching with context preservation",
+        "AI mode effects on response style", 
+        "Real-time context updates",
+        "Context validation and error handling"
+      ]
+    },
+    "metadata": {
+      "created": "2025-07-06",
+      "version": "1.0.0"
+    }
+  },
+
+  "sample_uacp_firesite": "[UACP:Firesite] Firesite is building revolutionary AI infrastructure for human potential. Our mission: create systems that adapt to humans, rather than forcing humans to adapt to static technology. Core projects: 1) Code Vault - Flutter component management with GitHub Gist integration, 2) Firesite Chat Service - Revolutionary streaming markdown with zero re-renders, 3) MCP Implementation - Context-aware AI conversations, 4) Context Evolution System - Intelligent context preservation. Architecture: Service-first design using SOLID principles, JamStack foundation, event-driven communication via GlobalEvents. Revolutionary achievements: 90% SSE rendering accuracy, context-aware AI integration, dynamic server switching between MCP base/Max. Current focus: Kanban development with AI-assisted workflows. Technology stack: JavaScript ES6+, Tailwind CSS, Firebase, Claude AI models, Docker containers, MCP servers. Development philosophy: Build systems that evolve WITH users, not against them.",
+
+  "sample_uacp_development": "[UACP:Development] This is a software development project focused on AI integration and context management. The team follows agile methodologies with emphasis on clean architecture, comprehensive testing, and user-centered design. Key technologies include modern JavaScript, Firebase, Claude AI models, and containerized services. The development environment prioritizes rapid iteration, continuous integration, and automated testing. Code quality is maintained through ESLint, Prettier, and comprehensive test suites. Documentation is treated as a first-class citizen with clear architecture diagrams and implementation guides.",
+
+  "sample_pacp_developer": {
+    "version": "1.0.0",
+    "profile": {
+      "name": "Firesite Developer",
+      "preferences": {
+        "communicationStyle": "direct and technical",
+        "detailLevel": "comprehensive",
+        "codeExplanationStyle": "commented with architecture notes", 
+        "preferredLanguages": ["javascript", "typescript", "dart"],
+        "learningStyle": "hands-on with real examples",
+        "responseFormat": "structured with clear action items"
+      },
+      "interests": [
+        "AI integration",
+        "streaming architectures", 
+        "context-aware systems",
+        "service-oriented design",
+        "performance optimization"
+      ],
+      "expertiseLevel": {
+        "programming": "advanced",
+        "systemDesign": "intermediate", 
+        "aiIntegration": "intermediate",
+        "streaming": "advanced",
+        "testing": "intermediate"
+      },
+      "personalContext": {
+        "timezone": "PST",
+        "workingHours": "9-17",
+        "projectTypes": ["ai tools", "streaming services", "context systems"],
+        "preferredTools": ["Claude Code", "VS Code", "Firebase", "Docker"],
+        "avoidTopics": ["theoretical discussions without practical application"]
+      }
+    },
+    "metadata": {
+      "createdAt": "2025-07-06T12:00:00Z",
+      "updatedAt": "2025-07-06T12:00:00Z", 
+      "version": "1.0.0"
+    }
+  },
+
+  "sample_pacp_manager": {
+    "version": "1.0.0",
+    "profile": {
+      "name": "Project Manager",
+      "preferences": {
+        "communicationStyle": "business-focused with clear outcomes",
+        "detailLevel": "high-level with key metrics",
+        "codeExplanationStyle": "business impact focused",
+        "learningStyle": "outcome-driven with clear ROI",
+        "responseFormat": "executive summary with action items"
+      },
+      "interests": [
+        "project delivery",
+        "team productivity",
+        "business outcomes",
+        "risk management",
+        "resource optimization"
+      ],
+      "expertiseLevel": {
+        "programming": "basic",
+        "systemDesign": "intermediate",
+        "projectManagement": "expert",
+        "businessStrategy": "advanced"
+      },
+      "personalContext": {
+        "timezone": "EST",
+        "workingHours": "8-18",
+        "projectTypes": ["AI tools", "productivity systems"],
+        "focusAreas": ["delivery timelines", "team coordination", "stakeholder communication"]
+      }
+    },
+    "metadata": {
+      "createdAt": "2025-07-06T12:00:00Z",
+      "updatedAt": "2025-07-06T12:00:00Z",
+      "version": "1.0.0"
+    }
+  }
+}

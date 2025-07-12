@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Streaming Service</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .mode-selector {
+            padding: 15px 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .mode-btn {
+            padding: 6px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .mode-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .mode-btn:hover:not(.active) {
+            background: #f3f4f6;
+        }
+
+        .controls {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .output {
+            padding: 20px;
+            min-height: 400px;
+            background: #fafafa;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .status {
+            padding: 10px 20px;
+            background: #f3f4f6;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        /* Universal Text Styles */
+        .streaming-text {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #374151;
+        }
+
+        /* Markdown Styles */
+        .output h1, .output h2, .output h3, .output h4, .output h5, .output h6 {
+            margin: 20px 0 10px 0;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .output h1 { font-size: 2rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; }
+        .output h2 { font-size: 1.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; }
+        .output h3 { font-size: 1.25rem; }
+        .output h4 { font-size: 1.125rem; }
+        .output h5 { font-size: 1rem; }
+        .output h6 { font-size: 0.875rem; }
+
+        .output p {
+            margin: 10px 0;
+            line-height: 1.7;
+        }
+
+        .output ul, .output ol {
+            margin: 10px 0;
+            padding-left: 30px;
+        }
+
+        .output li {
+            margin: 5px 0;
+        }
+
+        .output blockquote {
+            margin: 15px 0;
+            padding: 10px 20px;
+            border-left: 4px solid #3b82f6;
+            background: #eff6ff;
+            font-style: italic;
+        }
+
+        .output pre {
+            margin: 15px 0;
+            padding: 15px;
+            background: #1f2937;
+            color: #f9fafb;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .output code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+
+        .output p code, .output li code {
+            background: #f3f4f6;
+            color: #dc2626;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.875rem;
+        }
+
+        .output strong {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .output em {
+            font-style: italic;
+            color: #4b5563;
+        }
+
+        .output hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .output table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+        }
+
+        .output th, .output td {
+            border: 1px solid #d1d5db;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .output th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+
+        .output tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .streaming-cursor {
+            display: inline-block;
+            background: #2563eb;
+            width: 2px;
+            height: 1.2em;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Raw mode styles */
+        .raw-text {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Universal Streaming Service</h1>
+            <p>Progressive Markdown • Raw Text • Tables • Code Blocks • All Content Types</p>
+        </div>
+
+        <div class="mode-selector">
+            <span>Parse Mode:</span>
+            <button class="mode-btn active" onclick="demo.setMode('progressive')">Progressive Markdown</button>
+            <button class="mode-btn" onclick="demo.setMode('raw')">Raw Text</button>
+            <span style="margin-left: 20px; color: #6b7280; font-size: 0.875rem;">
+                Progressive: Parse markdown as it streams • Raw: Plain text preservation
+            </span>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="demo.startConversationDemo()">AI Conversation</button>
+            <button class="btn btn-primary" onclick="demo.startMixedContentDemo()">Mixed Content</button>
+            <button class="btn btn-primary" onclick="demo.startCodeDemo()">Code Examples</button>
+            <button class="btn btn-primary" onclick="demo.startTableDemo()">Tables & Lists</button>
+            <button class="btn btn-primary" onclick="demo.startRealWorldDemo()">Real-World Response</button>
+            <button class="btn btn-secondary" onclick="demo.pause()">Pause</button>
+            <button class="btn btn-secondary" onclick="demo.resume()">Resume</button>
+            <button class="btn btn-danger" onclick="demo.clear()">Clear</button>
+        </div>
+
+        <div class="output" id="output"></div>
+
+        <div class="status" id="status">Ready • Select parse mode and click a demo to start streaming</div>
+    </div>
+
+    <script>
+        /**
+         * Universal Streaming Service - Handles All Content Types Progressively
+         * 
+         * Core Principles:
+         * 1. Progressive markdown parsing during streaming
+         * 2. Graceful handling of incomplete markup
+         * 3. Support for all markdown elements (tables, lists, code, etc.)
+         * 4. Raw text mode for when no parsing is desired
+         * 5. Append-only DOM operations
+         */
+
+        // ===== CORE SERVICES =====
+
+        /**
+         * UniversalStreamingParser - Handles progressive parsing of any content
+         */
+        class UniversalStreamingParser {
+            constructor(mode = 'progressive') {
+                this.mode = mode; // 'progressive' or 'raw'
+                this.reset();
+            }
+
+            reset() {
+                this.buffer = '';
+                this.lineBuffer = '';
+                this.state = 'normal';
+                this.codeBlockLanguage = '';
+                this.tableHeaders = [];
+                this.inTable = false;
+                this.listStack = []; // Track nested lists
+                this.currentParagraph = ''; // Accumulate paragraph content
+            }
+
+            setMode(mode) {
+                this.mode = mode;
+            }
+
+            processChunk(chunk) {
+                if (this.mode === 'raw') {
+                    return [{ type: 'raw_text', content: chunk }];
+                }
+
+                this.buffer += chunk;
+                const instructions = [];
+                
+                // Handle code blocks first - they need special treatment
+                if (this.state === 'code_block') {
+                    const codeLines = this.buffer.split('\n');
+                    this.buffer = codeLines.pop() || '';
+                    
+                    for (const line of codeLines) {
+                        if (line.trim() === '```') {
+                            instructions.push({ type: 'end_code_block' });
+                            this.state = 'normal';
+                        } else {
+                            instructions.push({ type: 'code_line', content: line + '\n' });
+                        }
+                    }
+                    return instructions;
+                }
+                
+                // For normal content, process by lines but be smarter about paragraphs
+                const lines = this.buffer.split('\n');
+                this.buffer = lines.pop() || '';
+                
+                for (const line of lines) {
+                    instructions.push(...this.processLine(line));
+                }
+                
+                return instructions;
+            }
+
+            processLine(line) {
+                const instructions = [];
+                const trimmed = line.trim();
+
+                // Code block detection
+                if (trimmed.startsWith('```')) {
+                    // End any current paragraph before starting code block
+                    if (this.currentParagraph) {
+                        instructions.push({ 
+                            type: 'paragraph', 
+                            content: this.parseInlineMarkdown(this.currentParagraph.trim())
+                        });
+                        this.currentParagraph = '';
+                    }
+                    
+                    if (this.state === 'code_block') {
+                        instructions.push({ type: 'end_code_block' });
+                        this.state = 'normal';
+                    } else {
+                        this.codeBlockLanguage = trimmed.slice(3) || 'text';
+                        instructions.push({ 
+                            type: 'start_code_block', 
+                            language: this.codeBlockLanguage 
+                        });
+                        this.state = 'code_block';
+                    }
+                    return instructions;
+                }
+
+                // Table detection
+                if (this.isTableRow(line)) {
+                    // End current paragraph before table
+                    if (this.currentParagraph) {
+                        instructions.push({ 
+                            type: 'paragraph', 
+                            content: this.parseInlineMarkdown(this.currentParagraph.trim())
+                        });
+                        this.currentParagraph = '';
+                    }
+                    return this.handleTableRow(line);
+                }
+
+                // Regular markdown parsing
+                return this.parseMarkdownLine(line);
+            }
+
+            processPartialLine(partial) {
+                if (this.mode === 'raw' || this.state === 'code_block') {
+                    return [{ type: 'append_text', content: partial }];
+                }
+                
+                // For partial markdown, append as text until we get complete line
+                return [{ type: 'append_text', content: partial }];
+            }
+
+            parseMarkdownLine(line) {
+                const instructions = [];
+                const trimmed = line.trim();
+
+                // Empty line - end current paragraph
+                if (!trimmed) {
+                    if (this.currentParagraph.trim()) {
+                        instructions.push({ 
+                            type: 'paragraph', 
+                            content: this.parseInlineMarkdown(this.currentParagraph.trim())
+                        });
+                        this.currentParagraph = '';
+                    }
+                    return instructions;
+                }
+
+                // Structural elements - end paragraph and create new element
+                if (trimmed.startsWith('######')) {
+                    this.endCurrentParagraph(instructions);
+                    instructions.push({ type: 'heading', level: 6, content: this.parseInlineMarkdown(trimmed.slice(7)) });
+                } else if (trimmed.startsWith('#####')) {
+                    this.endCurrentParagraph(instructions);
+                    instructions.push({ type: 'heading', level: 5, content: this.parseInlineMarkdown(trimmed.slice(6)) });
+                } else if (trimmed.startsWith('####')) {
+                    this.endCurrentParagraph(instructions);
+                    instructions.push({ type: 'heading', level: 4, content: this.parseInlineMarkdown(trimmed.slice(5)) });
+                } else if (trimmed.startsWith('###')) {
+                    this.endCurrentParagraph(instructions);
+                    instructions.push({ type: 'heading', level: 3, content: this.parseInlineMarkdown(trimmed.slice(4)) });
+                } else if (trimmed.startsWith('##')) {
+                    this.endCurrentParagraph(instructions);
+                    instructions.push({ type: 'heading', level: 2, content: this.parseInlineMarkdown(trimmed.slice(3)) });
+                } else if (trimmed.startsWith('#')) {
+                    this.endCurrentParagraph(instructions);
+                    instructions.push({ type: 'heading', level: 1, content: this.parseInlineMarkdown(trimmed.slice(2)) });
+                } else if (trimmed.startsWith('> ')) {
+                    this.endCurrentParagraph(instructions);
+                    instructions.push({ type: 'blockquote', content: this.parseInlineMarkdown(trimmed.slice(2)) });
+                } else if (/^[-*+]\s/.test(trimmed)) {
+                    this.endCurrentParagraph(instructions);
+                    instructions.push({ type: 'unordered_list_item', content: this.parseInlineMarkdown(trimmed.slice(2)) });
+                } else if (/^\d+\.\s/.test(trimmed)) {
+                    this.endCurrentParagraph(instructions);
+                    const match = trimmed.match(/^(\d+)\.\s(.*)$/);
+                    instructions.push({ 
+                        type: 'ordered_list_item', 
+                        number: parseInt(match[1]), 
+                        content: this.parseInlineMarkdown(match[2]) 
+                    });
+                } else if (trimmed === '---' || trimmed === '***') {
+                    this.endCurrentParagraph(instructions);
+                    instructions.push({ type: 'horizontal_rule' });
+                } else {
+                    // Regular text - accumulate into current paragraph
+                    if (this.currentParagraph) {
+                        this.currentParagraph += ' ' + line.trim();
+                    } else {
+                        this.currentParagraph = line.trim();
+                    }
+                }
+
+                return instructions;
+            }
+
+            endCurrentParagraph(instructions) {
+                if (this.currentParagraph.trim()) {
+                    instructions.push({ 
+                        type: 'paragraph', 
+                        content: this.parseInlineMarkdown(this.currentParagraph.trim())
+                    });
+                    this.currentParagraph = '';
+                }
+            }
+
+            isTableRow(line) {
+                const trimmed = line.trim();
+                return trimmed.includes('|') && trimmed.length > 2;
+            }
+
+            handleTableRow(line) {
+                const instructions = [];
+                const cells = line.split('|').map(cell => cell.trim()).filter(cell => cell);
+                
+                // Check if this is a separator row (|---|---|)
+                if (cells.every(cell => /^-+$/.test(cell))) {
+                    if (!this.inTable && this.tableHeaders.length > 0) {
+                        instructions.push({ 
+                            type: 'start_table', 
+                            headers: this.tableHeaders 
+                        });
+                        this.inTable = true;
+                    }
+                    return instructions;
+                }
+
+                if (!this.inTable) {
+                    // This might be the header row
+                    this.tableHeaders = cells.map(cell => this.parseInlineMarkdown(cell));
+                    return instructions; // Wait for separator
+                }
+
+                // This is a data row
+                instructions.push({ 
+                    type: 'table_row', 
+                    cells: cells.map(cell => this.parseInlineMarkdown(cell))
+                });
+
+                return instructions;
+            }
+
+            parseInlineMarkdown(text) {
+                if (!text) return '';
+                
+                return text
+                    // Links first (before other formatting)
+                    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+                    // Code spans (protect from other formatting)
+                    .replace(/`([^`]+)`/g, '<code>$1</code>')
+                    // Bold (** or __)
+                    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                    .replace(/__([^_]+)__/g, '<strong>$1</strong>')
+                    // Italic (* or _)
+                    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                    .replace(/_([^_]+)_/g, '<em>$1</em>')
+                    // Strikethrough
+                    .replace(/~~([^~]+)~~/g, '<del>$1</del>');
+            }
+
+            finalize() {
+                const instructions = [];
+                
+                // End current paragraph if we have content
+                if (this.currentParagraph.trim()) {
+                    instructions.push({ 
+                        type: 'paragraph', 
+                        content: this.parseInlineMarkdown(this.currentParagraph.trim())
+                    });
+                }
+                
+                // Close any open table
+                if (this.inTable) {
+                    instructions.push({ type: 'end_table' });
+                }
+                
+                // Process any remaining buffer content
+                if (this.buffer.trim()) {
+                    if (this.state === 'code_block') {
+                        instructions.push({ type: 'code_line', content: this.buffer });
+                        instructions.push({ type: 'end_code_block' });
+                    } else if (!this.currentParagraph) {
+                        // Only create new paragraph if we don't already have one
+                        instructions.push({ type: 'paragraph', content: this.parseInlineMarkdown(this.buffer) });
+                    }
+                }
+                
+                return instructions;
+            }
+        }
+
+        /**
+         * UniversalDOMRenderer - Handles all content types with progressive rendering
+         */
+        class UniversalDOMRenderer {
+            constructor(container) {
+                this.container = container;
+                this.currentElement = null;
+                this.currentList = null;
+                this.currentTable = null;
+                this.cursor = null;
+                this.showCursor = true;
+            }
+
+            clear() {
+                this.container.innerHTML = '';
+                this.currentElement = null;
+                this.currentList = null;
+                this.currentTable = null;
+                this.cursor = null;
+            }
+
+            render(instructions) {
+                instructions.forEach(instruction => {
+                    this.renderInstruction(instruction);
+                });
+                this.updateCursor();
+            }
+
+            renderInstruction(instruction) {
+                switch (instruction.type) {
+                    case 'raw_text':
+                        this.renderRawText(instruction.content);
+                        break;
+
+                    case 'append_text':
+                        this.appendToCurrentElement(instruction.content);
+                        break;
+
+                    case 'heading':
+                        this.finishCurrentElement();
+                        this.createElement(`h${instruction.level}`);
+                        this.appendContent(instruction.content);
+                        break;
+
+                    case 'paragraph':
+                        this.finishCurrentElement();
+                        this.createElement('p');
+                        this.appendContent(instruction.content);
+                        break;
+
+                    case 'start_code_block':
+                        this.finishCurrentElement();
+                        this.createElement('pre');
+                        const code = document.createElement('code');
+                        if (instruction.language) {
+                            code.className = `language-${instruction.language}`;
+                        }
+                        this.currentElement.appendChild(code);
+                        this.currentElement = code;
+                        break;
+
+                    case 'code_line':
+                        if (this.currentElement && this.currentElement.tagName === 'CODE') {
+                            this.appendContent(instruction.content);
+                        }
+                        break;
+
+                    case 'end_code_block':
+                        this.currentElement = null;
+                        break;
+
+                    case 'unordered_list_item':
+                        this.ensureList('ul');
+                        this.addListItem(instruction.content);
+                        break;
+
+                    case 'ordered_list_item':
+                        this.ensureList('ol');
+                        this.addListItem(instruction.content);
+                        break;
+
+                    case 'blockquote':
+                        this.finishCurrentElement();
+                        this.createElement('blockquote');
+                        this.appendContent(instruction.content);
+                        break;
+
+                    case 'horizontal_rule':
+                        this.finishCurrentElement();
+                        const hr = document.createElement('hr');
+                        this.container.appendChild(hr);
+                        break;
+
+                    case 'start_table':
+                        this.finishCurrentElement();
+                        this.createTable(instruction.headers);
+                        break;
+
+                    case 'table_row':
+                        this.addTableRow(instruction.cells);
+                        break;
+
+                    case 'end_table':
+                        this.currentTable = null;
+                        break;
+
+                    case 'line_break':
+                        // Remove this case - we handle paragraph boundaries differently now
+                        break;
+                }
+            }
+
+            renderRawText(content) {
+                if (!this.currentElement || !this.currentElement.classList.contains('raw-text')) {
+                    this.finishCurrentElement();
+                    this.currentElement = document.createElement('div');
+                    this.currentElement.className = 'raw-text';
+                    this.container.appendChild(this.currentElement);
+                }
+                
+                this.removeCursor();
+                this.currentElement.appendChild(document.createTextNode(content));
+            }
+
+            ensureList(tagName) {
+                if (!this.currentList || this.currentList.tagName.toLowerCase() !== tagName) {
+                    this.finishCurrentElement();
+                    this.currentList = document.createElement(tagName);
+                    this.container.appendChild(this.currentList);
+                }
+            }
+
+            addListItem(content) {
+                if (this.currentList) {
+                    const li = document.createElement('li');
+                    li.innerHTML = content;
+                    this.currentList.appendChild(li);
+                }
+            }
+
+            createTable(headers) {
+                this.currentTable = document.createElement('table');
+                this.container.appendChild(this.currentTable);
+                
+                if (headers && headers.length > 0) {
+                    const thead = document.createElement('thead');
+                    const tr = document.createElement('tr');
+                    
+                    headers.forEach(header => {
+                        const th = document.createElement('th');
+                        th.innerHTML = header;
+                        tr.appendChild(th);
+                    });
+                    
+                    thead.appendChild(tr);
+                    this.currentTable.appendChild(thead);
+                }
+                
+                const tbody = document.createElement('tbody');
+                this.currentTable.appendChild(tbody);
+            }
+
+            addTableRow(cells) {
+                if (this.currentTable) {
+                    const tbody = this.currentTable.querySelector('tbody');
+                    const tr = document.createElement('tr');
+                    
+                    cells.forEach(cell => {
+                        const td = document.createElement('td');
+                        td.innerHTML = cell;
+                        tr.appendChild(td);
+                    });
+                    
+                    tbody.appendChild(tr);
+                }
+            }
+
+            createElement(tagName) {
+                this.finishCurrentElement();
+                this.currentElement = document.createElement(tagName);
+                this.container.appendChild(this.currentElement);
+            }
+
+            appendContent(content) {
+                if (this.currentElement) {
+                    this.removeCursor();
+                    
+                    if (content.includes('<')) {
+                        this.currentElement.innerHTML += content;
+                    } else {
+                        this.currentElement.appendChild(document.createTextNode(content));
+                    }
+                }
+            }
+
+            appendToCurrentElement(content) {
+                if (this.currentElement) {
+                    this.removeCursor();
+                    this.currentElement.appendChild(document.createTextNode(content));
+                } else {
+                    // No current element, create a paragraph
+                    this.createElement('p');
+                    this.appendContent(content);
+                }
+            }
+
+            finishCurrentElement() {
+                if (this.currentElement && this.currentElement.tagName === 'P' && 
+                    this.currentElement.textContent.trim() === '') {
+                    // Remove empty paragraphs
+                    this.currentElement.remove();
+                }
+                this.currentElement = null;
+                this.currentList = null;
+            }
+
+            updateCursor() {
+                if (!this.showCursor) return;
+                
+                this.removeCursor();
+                this.cursor = document.createElement('span');
+                this.cursor.className = 'streaming-cursor';
+                
+                if (this.currentElement) {
+                    this.currentElement.appendChild(this.cursor);
+                } else {
+                    this.container.appendChild(this.cursor);
+                }
+            }
+
+            removeCursor() {
+                if (this.cursor && this.cursor.parentNode) {
+                    this.cursor.parentNode.removeChild(this.cursor);
+                    this.cursor = null;
+                }
+            }
+
+            hideCursor() {
+                this.showCursor = false;
+                this.removeCursor();
+            }
+        }
+
+        /**
+         * StreamingService - Orchestrates universal streaming
+         */
+        class StreamingService {
+            constructor(container, statusElement) {
+                this.parser = new UniversalStreamingParser('progressive');
+                this.renderer = new UniversalDOMRenderer(container);
+                this.statusElement = statusElement;
+                this.isStreaming = false;
+                this.isPaused = false;
+                this.queue = [];
+                this.chunkCount = 0;
+                this.startTime = null;
+            }
+
+            setMode(mode) {
+                this.parser.setMode(mode);
+                
+                // Update UI
+                document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`.mode-btn[onclick="demo.setMode('${mode}')"]`).classList.add('active');
+            }
+
+            start() {
+                this.isStreaming = true;
+                this.isPaused = false;
+                this.chunkCount = 0;
+                this.startTime = Date.now();
+                this.parser.reset();
+                this.updateStatus(`Streaming in ${this.parser.mode} mode...`);
+            }
+
+            processChunk(chunk) {
+                if (!this.isStreaming || this.isPaused) {
+                    this.queue.push(chunk);
+                    return;
+                }
+
+                this.chunkCount++;
+                const instructions = this.parser.processChunk(chunk);
+                this.renderer.render(instructions);
+                
+                const elapsed = Date.now() - this.startTime;
+                this.updateStatus(`Streaming... ${this.chunkCount} chunks, ${elapsed}ms`);
+            }
+
+            finish() {
+                const instructions = this.parser.finalize();
+                this.renderer.render(instructions);
+                this.renderer.hideCursor();
+                
+                this.isStreaming = false;
+                const elapsed = Date.now() - this.startTime;
+                this.updateStatus(`Complete • ${this.chunkCount} chunks in ${elapsed}ms`);
+            }
+
+            pause() {
+                this.isPaused = true;
+                this.updateStatus('Paused');
+            }
+
+            resume() {
+                this.isPaused = false;
+                while (this.queue.length > 0 && !this.isPaused) {
+                    this.processChunk(this.queue.shift());
+                }
+                if (this.isStreaming) {
+                    this.updateStatus('Streaming...');
+                }
+            }
+
+            clear() {
+                this.isStreaming = false;
+                this.isPaused = false;
+                this.queue = [];
+                this.renderer.clear();
+                this.parser.reset();
+                this.updateStatus('Cleared');
+            }
+
+            updateStatus(message) {
+                this.statusElement.textContent = message;
+            }
+        }
+
+        // ===== DEMO ORCHESTRATOR =====
+
+        class DemoOrchestrator {
+            constructor() {
+                this.output = document.getElementById('output');
+                this.status = document.getElementById('status');
+                this.streamingService = new StreamingService(this.output, this.status);
+            }
+
+            setMode(mode) {
+                this.streamingService.setMode(mode);
+            }
+
+            async simulateStream(content, chunkSize = 3, delay = 50) {
+                this.streamingService.start();
+                
+                for (let i = 0; i < content.length; i += chunkSize) {
+                    if (!this.streamingService.isStreaming) break;
+                    
+                    const chunk = content.slice(i, i + chunkSize);
+                    this.streamingService.processChunk(chunk);
+                    
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+                
+                this.streamingService.finish();
+            }
+
+            startConversationDemo() {
+                const content = `Hey Tom! I see you're building the Firesite ecosystem - that's exciting stuff. An AI-powered CMS that adapts to users rather than forcing users to adapt to it sounds like exactly the kind of infrastructure thinking the world needs.
+
+I'd love to help you work through any challenges you're facing. Whether it's the **streaming service architecture**, real-time collaborative features, or integrating with Anthropic's API - I'm here to collaborate.
+
+The service-first approach you're taking makes a lot of sense. Separating the parsing logic from DOM manipulation gives you incredible flexibility as the ecosystem evolves.
+
+What specific aspect would you like to dive into next?`;
+
+                this.simulateStream(content, 4, 40);
+            }
+
+            startMixedContentDemo() {
+                const content = `# Mixed Content Streaming Demo
+
+This demonstrates how the service handles **all types of content** as it streams:
+
+## Regular text with formatting
+
+Here's some text with *italic emphasis*, **bold text**, and \`inline code\`. The parser handles these progressively as each character arrives.
+
+## Lists work perfectly
+
+Here's an unordered list:
+- First item with **bold text**
+- Second item with *italic text*
+- Third item with \`code snippets\`
+
+And an ordered list:
+1. Progressive parsing
+2. Append-only rendering
+3. Zero re-renders
+
+## Code blocks stream naturally
+
+\`\`\`javascript
+function streamContent(chunk) {
+    const instructions = parser.processChunk(chunk);
+    renderer.render(instructions);
+}
+
+// Each line appears as it arrives
+const result = streamContent('hello world');
+\`\`\`
+
+> **Note**: All of this content is being parsed and rendered progressively as it streams, with no re-rendering of existing elements.
+
+Perfect for real-world AI responses!`;
+
+                this.simulateStream(content, 3, 35);
+            }
+
+            startCodeDemo() {
+                const content = `# Code Examples & Syntax Highlighting
+
+Here are some code examples in different languages:
+
+## JavaScript Example
+
+\`\`\`javascript
+// Anthropic streaming integration
+import Anthropic from '@anthropic-ai/sdk';
+
+const client = new Anthropic();
+const stream = client.messages.stream({
+    model: 'claude-3-5-sonnet-latest',
+    max_tokens: 4096,
+    messages: [{ role: 'user', content: 'Help me code' }]
+});
+
+stream.on('text', (text) => {
+    streamingService.processChunk(text);
+});
+\`\`\`
+
+## Python Example
+
+\`\`\`python
+# Progressive markdown parser
+class MarkdownParser:
+    def __init__(self):
+        self.state = 'normal'
+        self.buffer = ''
+    
+    def process_chunk(self, chunk):
+        """Process streaming markdown content"""
+        self.buffer += chunk
+        return self.parse_lines()
+\`\`\`
+
+## Shell Commands
+
+\`\`\`bash
+# Setup Firesite development environment
+npm install
+npm run dev
+
+# Deploy to Firebase
+firebase deploy --only functions
+\`\`\`
+
+Each code block maintains its formatting and syntax highlighting context!`;
+
+                this.simulateStream(content, 3, 40);
+            }
+
+            startTableDemo() {
+                const content = `# Tables and Advanced Lists
+
+## Comparison Table
+
+| Feature | Traditional CMS | Firesite |
+|---------|----------------|----------|
+| User Adaptation | Users adapt to software | Software adapts to users |
+| AI Integration | Plugin-based | Native and intelligent |
+| Real-time Collab | Limited | Built-in with context |
+| Performance | Degrades with content | Consistent O(1) rendering |
+
+## Nested Lists
+
+Here's a complex nested structure:
+
+1. **Service Architecture**
+   - Parser Services
+     - Markdown parsing
+     - Plain text handling
+     - Table detection
+   - Rendering Services
+     - DOM manipulation
+     - Cursor management
+   - Orchestration
+     - Stream coordination
+     - Queue management
+
+2. **Key Benefits**
+   - Progressive rendering
+   - Zero re-renders
+   - Context preservation
+   - Performance optimization
+
+## Another Table
+
+| Technology | Use Case | Benefits |
+|------------|----------|----------|
+| Firebase | Backend infrastructure | Real-time sync, scalability |
+| WebPack 5 | Frontend build | Module federation, performance |
+| Flutter | Mobile development | Cross-platform, native performance |
+
+All content streams progressively while maintaining structure!`;
+
+                this.simulateStream(content, 4, 45);
+            }
+
+            startRealWorldDemo() {
+                const content = `Based on your Firesite ecosystem goals, here's how I'd approach the streaming service integration:
+
+## Architecture Recommendations
+
+### 1. Service Layer Design
+Your service-first approach is spot-on. I'd suggest:
+
+- **Content Processing Layer**: Handle different input types (plain text, markdown, Firesite-specific syntax)
+- **Rendering Layer**: Pure DOM manipulation with append-only operations
+- **Coordination Layer**: Manage streaming state, queue operations, handle pause/resume
+
+### 2. Real-time Collaboration Integration
+
+\`\`\`javascript
+// Firebase integration for real-time streaming
+const streamingService = new StreamingService(container, status);
+
+// Listen for collaborative changes
+firestore.collection('documents').doc(docId)
+  .onSnapshot((doc) => {
+    const changes = doc.data().changes;
+    changes.forEach(change => {
+      streamingService.processChunk(change.content);
+    });
+  });
+\`\`\`
+
+### 3. Performance Considerations
+
+| Metric | Traditional | Firesite Approach |
+|--------|-------------|-------------------|
+| Memory Usage | O(n) growing | O(1) constant |
+| Render Time | O(n) per update | O(1) per chunk |
+| User Experience | Blocking | Progressive |
+
+## Implementation Strategy
+
+1. **Start with MVP**: Basic text + markdown streaming
+2. **Add Firesite syntax**: Custom elements for your CMS
+3. **Integrate collaboration**: Real-time multi-user editing
+4. **Enhance with AI**: Context-aware suggestions during streaming
+
+This gives you a foundation that scales from simple chat to complex collaborative editing!
+
+Would you like me to dive deeper into any of these areas?`;
+
+                this.simulateStream(content, 5, 50);
+            }
+
+            pause() {
+                this.streamingService.pause();
+            }
+
+            resume() {
+                this.streamingService.resume();
+            }
+
+            clear() {
+                this.streamingService.clear();
+            }
+        }
+
+        // ===== INITIALIZATION =====
+
+        const demo = new DemoOrchestrator();
+
+        // Auto-start conversation demo
+        window.addEventListener('load', () => {
+            setTimeout(() => demo.startConversationDemo(), 500);
+        });
+
+        console.log('Universal Streaming Service initialized');
+        console.log('Modes: Progressive Markdown, Raw Text');
+        console.log('Features: Tables, Lists, Code Blocks, Inline Formatting, Real-time Parsing');
+        console.log('Architecture: Service-first, append-only, zero re-renders');
+    </script>
+</body>
+</html>

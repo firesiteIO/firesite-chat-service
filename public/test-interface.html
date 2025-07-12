@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firesite Chat - Test Interface</title>
+    <link rel="stylesheet" href="../src/assets/css/app.css">
+    <!-- Highlight.js CSS theme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <style>
+        /* Test interface specific styles */
+        .test-interface {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .test-buttons-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .demo-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .test-status {
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        
+        .metrics-display {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+        
+        .metric {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .metric-label {
+            font-size: 0.8em;
+            color: #666;
+        }
+        
+        .metric-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <header class="header">
+                <h1>Firesite Chat - Test Interface</h1>
+                <p class="tagline">Development Testing Environment</p>
+                <div id="status" class="status"></div>
+            </header>
+
+            <main class="main-content">
+                <div class="test-interface">
+                    <!-- Demo Content Testing -->
+                    <div class="test-section">
+                        <h3>Demo Content Streaming</h3>
+                        <p>Test streaming with pre-defined markdown content</p>
+                        <div class="demo-buttons">
+                            <button id="stream-basic" class="btn btn-secondary">Stream Basic Demo</button>
+                            <button id="stream-code" class="btn btn-secondary">Stream Code Demo</button>
+                            <button id="stream-complex" class="btn btn-secondary">Stream Complex Demo</button>
+                        </div>
+                        <div id="demo-metrics" class="metrics-display" style="display: none;"></div>
+                    </div>
+                    
+                    <!-- Live API Testing -->
+                    <div class="test-section">
+                        <h3>Live API Testing</h3>
+                        <p>Generate a test conversation using real Claude API responses</p>
+                        <div id="test-buttons-container" class="test-buttons-container">
+                            <button id="generate-test-conversation" class="btn btn-primary">Generate Test Conversation</button>
+                        </div>
+                        <div id="test-status" class="test-status" style="display: none;"></div>
+                    </div>
+                </div>
+                
+                <!-- Chat Display Area -->
+                <div class="chat-wrapper">
+                    <div class="chat-container">
+                        <div id="test-chat-messages" class="chat-messages"></div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="footer">
+                <p>Firesite Chat Test Interface • Development Environment</p>
+                <p class="version-info">
+                    <span id="version">v1.0.0</span> • 
+                    <span id="timestamp"></span>
+                </p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Settings Toggle Button -->
+    <button class="settings-toggle" id="settings-toggle" aria-label="Open settings"></button>
+    
+    <!-- Test interface specific script -->
+    <script type="module">
+        import { chatTestingService } from '../src/services/testing/chat-testing.service.js';
+        import { globalEvents, Events } from '../src/core/events/event-emitter.js';
+        import { domPurifyService } from '../src/services/security/dom-purify.service.js';
+        import { settingsPanel } from '../src/components/settings-panel.js';
+        import { connectionToggle } from '../src/components/connection-toggle.js';
+        import { modelSelector } from '../src/components/model-selector.js';
+        import { toastNotificationService } from '../src/services/ui/toast-notification.service.js';
+        import { anthropicDirectService } from '../src/services/anthropic/anthropic-direct.service.js';
+        import { mcpProxyService } from '../src/services/anthropic/mcp-proxy.service.js';
+        import { chatService } from '../src/services/chat/chat.service.js';
+        
+        // Demo content definitions
+        const demoContent = {
+            basic: `# Welcome to Firesite Chat Testing
+
+This demonstrates our **revolutionary** streaming markdown service with *zero re-renders* and \`progressive enhancement\`.
+
+## Key Features
+
+- Service-first architecture
+- Append-only DOM operations
+- Progressive rendering
+- Zero re-renders
+- Optimal performance
+
+> The future of streaming markdown is here!
+
+---
+
+Experience the difference with our **next-generation** streaming technology.`,
+
+            code: `# Code Block Streaming Demo
+
+Here's how our service handles code blocks with syntax highlighting:
+
+\`\`\`javascript
+class StreamingMarkdownService {
+  constructor(options = {}) {
+    this.sessions = new Map();
+    this.metrics = {
+      totalSessions: 0,
+      totalChunks: 0
+    };
+  }
+  
+  async processStream(stream, targetElement) {
+    // Revolutionary append-only rendering
+    const sessionId = this.createSession(targetElement);
+    await this.batcher.processStream(stream, async (batch) => {
+      await this.processBatch(sessionId, batch);
+    });
+    return this.getSessionMetrics(sessionId);
+  }
+}
+\`\`\`
+
+And here's some Python:
+
+\`\`\`python
+def stream_markdown(content):
+    """Stream markdown content progressively"""
+    for chunk in content:
+        yield process_chunk(chunk)
+    return "Complete!"
+\`\`\`
+
+Notice how each code block maintains perfect formatting!`,
+
+            complex: `# Complex Document Streaming Test
+
+## Table of Contents
+1. Introduction
+2. Features Overview
+3. Technical Implementation
+4. Performance Metrics
+
+### Introduction
+
+This document demonstrates the full capabilities of our streaming markdown service, including:
+
+- Nested lists with multiple levels
+  - Sub-item with **bold text**
+  - Another sub-item with *italics*
+    - Even deeper nesting
+    - With \`inline code\`
+- Back to first level
+
+### Code Examples
+
+\`\`\`typescript
+interface StreamingService {
+  processStream(stream: AsyncIterable<string>): Promise<Metrics>;
+  createSession(element: HTMLElement): string;
+  getMetrics(): GlobalMetrics;
+}
+\`\`\`
+
+### Performance Comparison
+
+| Approach | Re-renders | Performance | Memory |
+|----------|------------|-------------|---------|
+| Traditional | Every chunk | 9 FPS | Linear growth |
+| Our Service | Zero | 60 FPS | Constant |
+
+### Advanced Features
+
+1. **Smart Batching**: Intelligently groups chunks for optimal rendering
+2. **Progressive Enhancement**: Content appears as it streams
+3. **Memory Efficiency**: Constant memory usage regardless of content size
+
+The result? A streaming experience that feels instant while being incredibly efficient.`
+        };
+        
+        // Initialize services
+        async function initialize() {
+            console.log('Initializing test interface...');
+            
+            // Initialize core services
+            await domPurifyService.initialize();
+            toastNotificationService.init();
+            
+            // Initialize AI services
+            anthropicDirectService.initialize();
+            try {
+                await mcpProxyService.initialize();
+            } catch (error) {
+                console.warn('MCP Proxy not available:', error);
+            }
+            
+            // Initialize chat service
+            chatService.initialize();
+            
+            // Initialize UI components
+            settingsPanel.init();
+            connectionToggle.init();
+            modelSelector.init();
+            
+            setupTestButtons();
+            updateTimestamp();
+            
+            updateStatus('Test interface ready', 'success');
+        }
+        
+        // Setup test button handlers
+        function setupTestButtons() {
+            const chatContainer = document.getElementById('test-chat-messages');
+            const metricsElement = document.getElementById('demo-metrics');
+            const testStatus = document.getElementById('test-status');
+            
+            // Demo content buttons
+            document.getElementById('stream-basic')?.addEventListener('click', async () => {
+                metricsElement.style.display = 'flex';
+                await chatTestingService.streamDemoContent(
+                    demoContent.basic, 
+                    chatContainer, 
+                    metricsElement
+                );
+            });
+            
+            document.getElementById('stream-code')?.addEventListener('click', async () => {
+                metricsElement.style.display = 'flex';
+                await chatTestingService.streamDemoContent(
+                    demoContent.code, 
+                    chatContainer, 
+                    metricsElement
+                );
+            });
+            
+            document.getElementById('stream-complex')?.addEventListener('click', async () => {
+                metricsElement.style.display = 'flex';
+                await chatTestingService.streamDemoContent(
+                    demoContent.complex, 
+                    chatContainer, 
+                    metricsElement
+                );
+            });
+            
+            // Test conversation button
+            document.getElementById('generate-test-conversation')?.addEventListener('click', async () => {
+                testStatus.style.display = 'block';
+                
+                try {
+                    await chatTestingService.generateTestConversation({
+                        container: chatContainer,
+                        onProgress: (progress) => {
+                            testStatus.textContent = progress.message;
+                            if (progress.complete) {
+                                updateStatus(progress.message, 'success');
+                                setTimeout(() => {
+                                    testStatus.style.display = 'none';
+                                }, 3000);
+                            }
+                        }
+                    });
+                } catch (error) {
+                    updateStatus(`Test error: ${error.message}`, 'error');
+                    testStatus.style.display = 'none';
+                }
+            });
+        }
+        
+        // Update status display
+        function updateStatus(message, type = '') {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = message;
+            statusElement.className = `status ${type} visible`;
+            
+            // Auto-hide after 5 seconds for non-persistent types
+            if (type !== 'connected' && type !== 'error') {
+                setTimeout(() => {
+                    statusElement.classList.remove('visible');
+                }, 5000);
+            }
+        }
+        
+        // Update timestamp
+        function updateTimestamp() {
+            const timestampElement = document.getElementById('timestamp');
+            if (timestampElement) {
+                const updateTime = () => {
+                    timestampElement.textContent = new Date().toLocaleTimeString();
+                };
+                updateTime();
+                setInterval(updateTime, 1000);
+            }
+        }
+        
+        // Initialize on DOM ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initialize);
+        } else {
+            initialize();
+        }
+    </script>
+</body>
+</html>

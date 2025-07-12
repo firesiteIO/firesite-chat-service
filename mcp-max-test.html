@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Max Integration Test</title>
+    <link rel="stylesheet" href="/src/assets/css/app.css">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--bg-color);
+            color: var(--text-primary);
+        }
+        
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            background: var(--bg-secondary);
+        }
+        
+        .test-section h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        
+        .test-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+        
+        .test-output {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .context-preview {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-connected {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success-color);
+        }
+        
+        .status-disconnected {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error-color);
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+        
+        select, textarea {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+        
+        textarea {
+            resize: vertical;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+        
+        .test-message {
+            background: var(--bg-color);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 0.375rem 0.375rem 0;
+        }
+        
+        .response-message {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--success-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 0.375rem 0.375rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <header>
+            <h1>MCP Max Integration Test Suite</h1>
+            <p>Test server switching, AI modes, and context object integration</p>
+            <div id="connection-status" class="status-indicator status-disconnected">
+                <div class="status-dot"></div>
+                Not Connected
+            </div>
+        </header>
+
+        <!-- Server Connection Test -->
+        <section class="test-section">
+            <h2>1. MCP Server Connection</h2>
+            <div class="test-controls">
+                <select id="server-select">
+                    <option value="base">Base Server (localhost:3001)</option>
+                    <option value="max">Max Server (localhost:3002)</option>
+                </select>
+                <button class="btn btn-primary" id="connect-btn">Connect</button>
+                <button class="btn btn-secondary" id="test-connection-btn">Test Connection</button>
+            </div>
+            <div id="connection-output" class="test-output">Ready to test server connection...</div>
+        </section>
+
+        <!-- AI Mode Testing -->
+        <section class="test-section">
+            <h2>2. AI Mode Selection (MCP Max Only)</h2>
+            <div class="test-controls">
+                <select id="ai-mode-select">
+                    <option value="development">Developer</option>
+                    <option value="planning">Planner</option>
+                    <option value="testing">Tester</option>
+                    <option value="documentation">Documenter</option>
+                    <option value="analysis">Analyst</option>
+                    <option value="review">Reviewer</option>
+                    <option value="research">Researcher</option>
+                </select>
+                <button class="btn btn-primary" id="set-ai-mode-btn">Set AI Mode</button>
+            </div>
+            <div id="ai-mode-output" class="test-output">Select Max server first to test AI modes...</div>
+        </section>
+
+        <!-- MMCO Context Testing -->
+        <section class="test-section">
+            <h2>3. MMCO Context Integration</h2>
+            <div class="test-controls">
+                <select id="mmco-preset-select">
+                    <option value="">Select MMCO Preset</option>
+                    <option value="kanbanDevelopment">Kanban Development</option>
+                    <option value="kanbanPlanning">Kanban Planning</option>
+                    <option value="kanbanTesting">Kanban Testing</option>
+                    <option value="kanbanDocumentation">Kanban Documentation</option>
+                    <option value="kanbanAnalysis">Kanban Analysis</option>
+                </select>
+                <button class="btn btn-secondary" id="load-mmco-btn">Load Preset</button>
+                <button class="btn btn-primary" id="send-mmco-btn">Send MMCO Context</button>
+            </div>
+            <div class="context-preview" id="mmco-preview">Select a preset to preview MMCO context...</div>
+            <div id="mmco-output" class="test-output">MMCO context ready for testing...</div>
+        </section>
+
+        <!-- UACP Context Testing -->
+        <section class="test-section">
+            <h2>4. UACP Context Integration</h2>
+            <div class="test-controls">
+                <select id="uacp-preset-select">
+                    <option value="">Select UACP Preset</option>
+                    <option value="firesiteProfile">Firesite Profile</option>
+                    <option value="techStartupProfile">Tech Startup Profile</option>
+                    <option value="ecommerceProfile">E-commerce Profile</option>
+                </select>
+                <button class="btn btn-secondary" id="load-uacp-btn">Load Preset</button>
+                <button class="btn btn-primary" id="send-uacp-btn">Send UACP Context</button>
+            </div>
+            <div class="context-preview" id="uacp-preview">Select a preset to preview UACP context...</div>
+            <div id="uacp-output" class="test-output">UACP context ready for testing...</div>
+        </section>
+
+        <!-- Integration Test -->
+        <section class="test-section">
+            <h2>5. Integrated Workflow Test</h2>
+            <div class="test-controls">
+                <button class="btn btn-primary" id="run-integration-test-btn">Run Full Integration Test</button>
+                <button class="btn btn-secondary" id="clear-test-btn">Clear Results</button>
+            </div>
+            <div>
+                <h3>Test Message:</h3>
+                <textarea id="test-message" rows="4" style="width: 100%;" placeholder="Enter a test message for Claude...">Hello Claude! Can you help me plan a Kanban board for the Firesite project? I'd like to understand the key features we need to implement.</textarea>
+            </div>
+            <div id="integration-output" class="test-output">Integration test results will appear here...</div>
+        </section>
+
+        <!-- Chat Response Area -->
+        <section class="test-section">
+            <h2>6. Live Chat Response</h2>
+            <div id="chat-response-area">
+                <!-- Chat responses will be dynamically added here -->
+            </div>
+        </section>
+    </div>
+
+    <script type="module">
+        import { sampleMMCOContexts } from '/src/data/sample-contexts/sample-mmco.js';
+        import { sampleUACPContexts } from '/src/data/sample-contexts/sample-uacp.js';
+        import { MCPControlsComponent } from '/src/ui/components/mcp-controls.js';
+        import { FiresiteStreamingService } from '/src/services/streaming/firesite-streaming.service.js';
+
+        // Initialize streaming service for testing
+        const testContainer = document.getElementById('chat-response-area');
+        const streamingService = new FiresiteStreamingService(testContainer);
+        
+        // Initialize MCP controls
+        const mcpControls = new MCPControlsComponent(streamingService);
+        
+        // Test interface state
+        let currentMMCOContext = null;
+        let currentUACPContext = null;
+
+        // DOM elements
+        const elements = {
+            connectionStatus: document.getElementById('connection-status'),
+            serverSelect: document.getElementById('server-select'),
+            connectBtn: document.getElementById('connect-btn'),
+            testConnectionBtn: document.getElementById('test-connection-btn'),
+            connectionOutput: document.getElementById('connection-output'),
+            
+            aiModeSelect: document.getElementById('ai-mode-select'),
+            setAIModeBtn: document.getElementById('set-ai-mode-btn'),
+            aiModeOutput: document.getElementById('ai-mode-output'),
+            
+            mmcoPresetSelect: document.getElementById('mmco-preset-select'),
+            loadMMCOBtn: document.getElementById('load-mmco-btn'),
+            sendMMCOBtn: document.getElementById('send-mmco-btn'),
+            mmcoPreview: document.getElementById('mmco-preview'),
+            mmcoOutput: document.getElementById('mmco-output'),
+            
+            uacpPresetSelect: document.getElementById('uacp-preset-select'),
+            loadUACPBtn: document.getElementById('load-uacp-btn'),
+            sendUACPBtn: document.getElementById('send-uacp-btn'),
+            uacpPreview: document.getElementById('uacp-preview'),
+            uacpOutput: document.getElementById('uacp-output'),
+            
+            runIntegrationTestBtn: document.getElementById('run-integration-test-btn'),
+            clearTestBtn: document.getElementById('clear-test-btn'),
+            testMessage: document.getElementById('test-message'),
+            integrationOutput: document.getElementById('integration-output')
+        };
+
+        // Event handlers
+        elements.connectBtn.addEventListener('click', handleConnect);
+        elements.testConnectionBtn.addEventListener('click', handleTestConnection);
+        elements.setAIModeBtn.addEventListener('click', handleSetAIMode);
+        elements.loadMMCOBtn.addEventListener('click', handleLoadMMCO);
+        elements.sendMMCOBtn.addEventListener('click', handleSendMMCO);
+        elements.loadUACPBtn.addEventListener('click', handleLoadUACP);
+        elements.sendUACPBtn.addEventListener('click', handleSendUACP);
+        elements.runIntegrationTestBtn.addEventListener('click', handleRunIntegrationTest);
+        elements.clearTestBtn.addEventListener('click', handleClearTest);
+
+        async function handleConnect() {
+            const serverMode = elements.serverSelect.value;
+            updateOutput('connectionOutput', \`Connecting to \${serverMode} server...\`);
+            
+            try {
+                const success = await streamingService.switchMCPServer(serverMode);
+                
+                if (success) {
+                    updateConnectionStatus(true, \`Connected to \${serverMode} server\`);
+                    updateOutput('connectionOutput', \`✅ Successfully connected to \${serverMode} server\`);
+                } else {
+                    updateConnectionStatus(false, 'Connection failed');
+                    updateOutput('connectionOutput', \`❌ Failed to connect to \${serverMode} server\`);
+                }
+            } catch (error) {
+                updateConnectionStatus(false, 'Connection error');
+                updateOutput('connectionOutput', \`💥 Error: \${error.message}\`);
+            }
+        }
+
+        async function handleTestConnection() {
+            updateOutput('connectionOutput', 'Testing server connectivity...');
+            
+            try {
+                const status = streamingService.mcpServerManager.getStatus();
+                const isAvailable = await streamingService.mcpServerManager.testServerConnection();
+                
+                const result = {
+                    serverMode: status.mode,
+                    serverUrl: status.serverUrl,
+                    isConnected: status.isConnected,
+                    isAvailable: isAvailable,
+                    capabilities: status.capabilities,
+                    context: status.context
+                };
+                
+                updateOutput('connectionOutput', \`📊 Connection Test Results:\\n\${JSON.stringify(result, null, 2)}\`);
+            } catch (error) {
+                updateOutput('connectionOutput', \`💥 Test failed: \${error.message}\`);
+            }
+        }
+
+        async function handleSetAIMode() {
+            const mode = elements.aiModeSelect.value;
+            updateOutput('aiModeOutput', \`Setting AI mode to: \${mode}...\`);
+            
+            try {
+                const success = await streamingService.setAIMode(mode);
+                
+                if (success) {
+                    updateOutput('aiModeOutput', \`✅ AI mode set to: \${mode}\`);
+                } else {
+                    updateOutput('aiModeOutput', \`❌ Failed to set AI mode (Max server required)\`);
+                }
+            } catch (error) {
+                updateOutput('aiModeOutput', \`💥 Error: \${error.message}\`);
+            }
+        }
+
+        function handleLoadMMCO() {
+            const preset = elements.mmcoPresetSelect.value;
+            if (!preset) return;
+            
+            currentMMCOContext = sampleMMCOContexts[preset];
+            elements.mmcoPreview.textContent = JSON.stringify(currentMMCOContext, null, 2);
+            updateOutput('mmcoOutput', \`📋 Loaded MMCO preset: \${preset}\`);
+        }
+
+        async function handleSendMMCO() {
+            if (!currentMMCOContext) {
+                updateOutput('mmcoOutput', '❌ No MMCO context loaded');
+                return;
+            }
+            
+            updateOutput('mmcoOutput', 'Sending MMCO context to server...');
+            
+            try {
+                const success = await streamingService.setMMCOContext(currentMMCOContext);
+                
+                if (success) {
+                    updateOutput('mmcoOutput', '✅ MMCO context sent successfully');
+                } else {
+                    updateOutput('mmcoOutput', '❌ Failed to send MMCO context (Max server required)');
+                }
+            } catch (error) {
+                updateOutput('mmcoOutput', \`💥 Error: \${error.message}\`);
+            }
+        }
+
+        function handleLoadUACP() {
+            const preset = elements.uacpPresetSelect.value;
+            if (!preset) return;
+            
+            currentUACPContext = sampleUACPContexts[preset];
+            elements.uacpPreview.textContent = typeof currentUACPContext === 'string' ? 
+                currentUACPContext.substring(0, 500) + '...' : 
+                JSON.stringify(currentUACPContext, null, 2);
+            updateOutput('uacpOutput', \`🏢 Loaded UACP preset: \${preset}\`);
+        }
+
+        async function handleSendUACP() {
+            if (!currentUACPContext) {
+                updateOutput('uacpOutput', '❌ No UACP context loaded');
+                return;
+            }
+            
+            updateOutput('uacpOutput', 'Sending UACP context to server...');
+            
+            try {
+                const success = await streamingService.setUACPContext(currentUACPContext);
+                
+                if (success) {
+                    updateOutput('uacpOutput', '✅ UACP context sent successfully');
+                } else {
+                    updateOutput('uacpOutput', '❌ Failed to send UACP context (Max server required)');
+                }
+            } catch (error) {
+                updateOutput('uacpOutput', \`💥 Error: \${error.message}\`);
+            }
+        }
+
+        async function handleRunIntegrationTest() {
+            const message = elements.testMessage.value.trim();
+            if (!message) {
+                updateOutput('integrationOutput', '❌ Please enter a test message');
+                return;
+            }
+            
+            updateOutput('integrationOutput', '🚀 Running full integration test...\\n');
+            
+            try {
+                // Add test message to chat
+                addTestMessage(message);
+                
+                // Send message through streaming service
+                streamingService.start();
+                await streamingService.sendMessage(message);
+                
+                updateOutput('integrationOutput', '✅ Integration test completed - check chat response area');
+            } catch (error) {
+                updateOutput('integrationOutput', \`💥 Integration test failed: \${error.message}\`);
+            }
+        }
+
+        function handleClearTest() {
+            // Clear all outputs
+            elements.connectionOutput.textContent = 'Ready to test server connection...';
+            elements.aiModeOutput.textContent = 'Select Max server first to test AI modes...';
+            elements.mmcoOutput.textContent = 'MMCO context ready for testing...';
+            elements.uacpOutput.textContent = 'UACP context ready for testing...';
+            elements.integrationOutput.textContent = 'Integration test results will appear here...';
+            
+            // Clear chat response area
+            testContainer.innerHTML = '';
+            
+            // Reset streaming service
+            streamingService.clear();
+        }
+
+        function updateOutput(elementId, text) {
+            const element = elements[elementId];
+            if (element) {
+                element.textContent = text;
+            }
+        }
+
+        function updateConnectionStatus(connected, message) {
+            elements.connectionStatus.className = \`status-indicator \${connected ? 'status-connected' : 'status-disconnected'}\`;
+            elements.connectionStatus.innerHTML = \`
+                <div class="status-dot"></div>
+                \${message}
+            \`;
+        }
+
+        function addTestMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.className = 'test-message';
+            messageElement.innerHTML = \`
+                <strong>Test Message:</strong><br>
+                \${message}
+            \`;
+            testContainer.appendChild(messageElement);
+        }
+
+        // Initialize
+        console.log('MCP Max Integration Test Suite initialized');
+        console.log('Available MMCO contexts:', Object.keys(sampleMMCOContexts));
+        console.log('Available UACP contexts:', Object.keys(sampleUACPContexts));
+    </script>
+</body>
+</html>

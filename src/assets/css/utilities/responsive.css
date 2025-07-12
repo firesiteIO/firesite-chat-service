@@ -1,0 +1,124 @@
+/* Responsive Design and Media Queries */
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .nav-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .button-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .conversation-browser {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  
+  .browser-sidebar {
+    order: 2;
+    height: 200px;
+  }
+  
+  .browser-content {
+    order: 1;
+  }
+
+  .mode-dropdown-content {
+    min-width: 300px;
+    right: auto;
+    left: 0;
+  }
+  
+  .mode-options {
+    flex-direction: column;
+  }
+  
+  .controls-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .message-text h1 { font-size: 1.5rem; }
+  .message-text h2 { font-size: 1.3rem; }
+  .message-text h3 { font-size: 1.1rem; }
+  
+  .message-text table {
+    font-size: 0.875rem;
+  }
+  
+  .message-text th, .message-text td {
+    padding: 0.5rem;
+  }
+  
+  .message-content {
+    max-width: 85%;
+  }
+}
+
+/* Print Styles */
+@media print {
+  [data-folded="true"] {
+    display: block !important;
+  }
+  
+  .message-folded {
+    display: none !important;
+  }
+  
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .nav-tabs,
+  .controls,
+  .footer,
+  .chat-input {
+    display: none;
+  }
+  
+  .output-container,
+  .chat-messages {
+    border: 1px solid #ddd;
+    max-height: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .message-text blockquote {
+    border-left-width: 6px;
+    background-color: transparent;
+  }
+  
+  .message-text code:not(pre code) {
+    border-width: 2px;
+  }
+  
+  .copy-btn, .export-btn {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .chat-message,
+  .copy-btn,
+  .export-btn {
+    animation: none;
+    transition: none;
+  }
+  
+  .thinking-dots::after {
+    animation: none;
+    content: '...';
+  }
+}

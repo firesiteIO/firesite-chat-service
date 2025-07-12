@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firesite Chat Service - Diagnostic Testing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .controls {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 600px;
+        }
+
+        .test-output {
+            padding: 20px;
+            background: #fafafa;
+            border-right: 1px solid #e5e7eb;
+            overflow-y: auto;
+        }
+
+        .diagnostic-panel {
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .status {
+            padding: 10px 20px;
+            background: #f3f4f6;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .diagnostic-section {
+            margin-bottom: 20px;
+        }
+
+        .diagnostic-section h3 {
+            margin-bottom: 10px;
+            color: #1f2937;
+            font-size: 1.1rem;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .pattern-item {
+            background: #f9fafb;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border-left: 4px solid #fbbf24;
+        }
+
+        .pattern-item.high {
+            border-left-color: #dc2626;
+        }
+
+        .pattern-item.medium {
+            border-left-color: #f59e0b;
+        }
+
+        .pattern-item.low {
+            border-left-color: #10b981;
+        }
+
+        .test-progress {
+            background: #f3f4f6;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #2563eb;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .log-entry {
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            margin: 2px 0;
+            padding: 2px 4px;
+        }
+
+        .log-entry.info {
+            color: #6b7280;
+        }
+
+        .log-entry.success {
+            color: #059669;
+        }
+
+        .log-entry.error {
+            color: #dc2626;
+        }
+
+        .log-entry.test {
+            color: #2563eb;
+        }
+
+        /* Markdown styles for test output */
+        .test-output h1, .test-output h2, .test-output h3, .test-output h4 {
+            margin: 20px 0 10px 0;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .test-output h1 { font-size: 2rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; }
+        .test-output h2 { font-size: 1.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; }
+        .test-output h3 { font-size: 1.25rem; }
+        .test-output h4 { font-size: 1.125rem; }
+
+        .test-output p {
+            margin: 10px 0;
+            line-height: 1.7;
+        }
+
+        .test-output ul, .test-output ol {
+            margin: 10px 0;
+            padding-left: 30px;
+        }
+
+        .test-output li {
+            margin: 5px 0;
+        }
+
+        .test-output pre {
+            margin: 15px 0;
+            padding: 15px;
+            background: #1f2937;
+            color: #f9fafb;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .test-output code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+
+        .test-output p code, .test-output li code {
+            background: #f3f4f6;
+            color: #dc2626;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .test-output blockquote {
+            margin: 15px 0;
+            padding: 10px 20px;
+            border-left: 4px solid #3b82f6;
+            background: #eff6ff;
+            font-style: italic;
+        }
+
+        .test-output table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .test-output th, .test-output td {
+            border: 1px solid #d1d5db;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .test-output th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Systematic Testing Dashboard</h1>
+            <p>Pattern-based diagnostic testing for Firesite Chat Service</p>
+        </div>
+
+        <div class="controls">
+            <button id="runAllTests" class="btn btn-primary">Run All Tests</button>
+            <button id="runSingleTest" class="btn btn-secondary">Run Single Test</button>
+            <button id="clearResults" class="btn btn-secondary">Clear Results</button>
+            <button id="exportResults" class="btn btn-secondary" disabled>Export Results</button>
+            
+            <select id="singleTestSelect" style="margin-left: 20px; padding: 8px; border-radius: 4px; border: 1px solid #d1d5db;">
+                <option value="">Select a test...</option>
+            </select>
+        </div>
+
+        <div class="layout">
+            <div class="test-output" id="testOutput">
+                <p>Ready to run tests. Click "Run All Tests" to begin systematic testing.</p>
+                <p>This will test the three-stage pipeline: <strong>Buffer → Parse → Replay</strong></p>
+            </div>
+
+            <div class="diagnostic-panel" id="diagnosticPanel">
+                <div class="diagnostic-section">
+                    <h3>Test Progress</h3>
+                    <div class="test-progress">
+                        <div>Status: <span id="testStatus">Ready</span></div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                        </div>
+                        <div>Tests: <span id="testCount">0/0</span></div>
+                    </div>
+                </div>
+
+                <div class="diagnostic-section">
+                    <h3>Current Metrics</h3>
+                    <div id="metricsPanel">
+                        <div class="metric">
+                            <span>Accuracy:</span>
+                            <span id="accuracy">--%</span>
+                        </div>
+                        <div class="metric">
+                            <span>Tests Passed:</span>
+                            <span id="testsPassed">0</span>
+                        </div>
+                        <div class="metric">
+                            <span>Tests Failed:</span>
+                            <span id="testsFailed">0</span>
+                        </div>
+                        <div class="metric">
+                            <span>Avg Duration:</span>
+                            <span id="avgDuration">--ms</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="diagnostic-section">
+                    <h3>Failure Patterns</h3>
+                    <div id="patternsPanel">
+                        <p class="log-entry info">No patterns identified yet</p>
+                    </div>
+                </div>
+
+                <div class="diagnostic-section">
+                    <h3>Recommendations</h3>
+                    <div id="recommendationsPanel">
+                        <p class="log-entry info">Run tests to get recommendations</p>
+                    </div>
+                </div>
+
+                <div class="diagnostic-section">
+                    <h3>Test Log</h3>
+                    <div id="testLog" style="max-height: 200px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.8rem;">
+                        <div class="log-entry info">System ready for testing</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status" id="statusBar">
+            Ready to test • Use breakthrough streaming service at localhost:5173
+        </div>
+    </div>
+
+    <script type="module">
+        import { BreakthroughStreamingService } from '../src/services/streaming/breakthrough-streaming.service.js';
+        import { systematicTestRunner } from '../src/services/testing/systematic-test-runner.service.js';
+
+        // UI elements
+        const testOutput = document.getElementById('testOutput');
+        const runAllTestsBtn = document.getElementById('runAllTests');
+        const runSingleTestBtn = document.getElementById('runSingleTest');
+        const clearResultsBtn = document.getElementById('clearResults');
+        const exportResultsBtn = document.getElementById('exportResults');
+        const singleTestSelect = document.getElementById('singleTestSelect');
+        const testStatus = document.getElementById('testStatus');
+        const progressFill = document.getElementById('progressFill');
+        const testCount = document.getElementById('testCount');
+        const accuracy = document.getElementById('accuracy');
+        const testsPassed = document.getElementById('testsPassed');
+        const testsFailed = document.getElementById('testsFailed');
+        const avgDuration = document.getElementById('avgDuration');
+        const patternsPanel = document.getElementById('patternsPanel');
+        const recommendationsPanel = document.getElementById('recommendationsPanel');
+        const testLog = document.getElementById('testLog');
+        const statusBar = document.getElementById('statusBar');
+
+        // Initialize streaming service
+        const streamingService = new BreakthroughStreamingService(testOutput);
+
+        // Populate test selection dropdown
+        function populateTestSelect() {
+            const patterns = systematicTestRunner.testPatterns;
+            
+            for (const [category, tests] of Object.entries(patterns)) {
+                for (const [testName, testData] of Object.entries(tests)) {
+                    const option = document.createElement('option');
+                    option.value = `${category}.${testName}`;
+                    option.textContent = `${category}: ${testData.description}`;
+                    singleTestSelect.appendChild(option);
+                }
+            }
+        }
+
+        // Log message to test log
+        function log(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            testLog.appendChild(entry);
+            testLog.scrollTop = testLog.scrollHeight;
+        }
+
+        // Update UI with test results
+        function updateUI(results) {
+            if (!results) return;
+
+            const passed = results.filter(r => r.success).length;
+            const failed = results.length - passed;
+            const accuracyPercent = results.length > 0 ? 
+                ((passed / results.length) * 100).toFixed(1) : 0;
+
+            accuracy.textContent = `${accuracyPercent}%`;
+            testsPassed.textContent = passed;
+            testsFailed.textContent = failed;
+
+            const successfulTests = results.filter(r => r.success && r.duration);
+            if (successfulTests.length > 0) {
+                const avgDur = successfulTests.reduce((sum, r) => sum + r.duration, 0) / successfulTests.length;
+                avgDuration.textContent = `${avgDur.toFixed(0)}ms`;
+            }
+
+            exportResultsBtn.disabled = results.length === 0;
+        }
+
+        // Run all tests
+        runAllTestsBtn.addEventListener('click', async () => {
+            runAllTestsBtn.disabled = true;
+            testStatus.textContent = 'Running...';
+            log('Starting systematic test run', 'test');
+
+            try {
+                const analysis = await systematicTestRunner.runAllTests(streamingService, testOutput);
+                
+                testStatus.textContent = 'Complete';
+                log(`Test run complete. Accuracy: ${100 - parseFloat(analysis.failure_rate)}%`, 'success');
+                
+                updateUI(systematicTestRunner.testResults);
+                
+                // Update patterns panel
+                if (analysis.patterns.length > 0) {
+                    patternsPanel.innerHTML = '';
+                    analysis.patterns.forEach(pattern => {
+                        const div = document.createElement('div');
+                        div.className = 'pattern-item medium';
+                        div.innerHTML = `
+                            <strong>${pattern.pattern}</strong> (${pattern.frequency}x, ${pattern.percentage}%)
+                            <br><small>Stages: ${pattern.stages.join(', ')}</small>
+                        `;
+                        patternsPanel.appendChild(div);
+                    });
+                } else {
+                    patternsPanel.innerHTML = '<p class="log-entry success">No failure patterns detected!</p>';
+                }
+                
+                // Update recommendations panel
+                if (analysis.recommendations.length > 0) {
+                    recommendationsPanel.innerHTML = '';
+                    analysis.recommendations.forEach(rec => {
+                        const div = document.createElement('div');
+                        div.className = `pattern-item ${rec.priority}`;
+                        div.innerHTML = `
+                            <strong>${rec.pattern}</strong>
+                            <br>${rec.suggestion}
+                            <br><small>Location: ${rec.location}</small>
+                        `;
+                        recommendationsPanel.appendChild(div);
+                    });
+                } else {
+                    recommendationsPanel.innerHTML = '<p class="log-entry success">No specific recommendations at this time</p>';
+                }
+                
+            } catch (error) {
+                testStatus.textContent = 'Error';
+                log(`Test run failed: ${error.message}`, 'error');
+            } finally {
+                runAllTestsBtn.disabled = false;
+            }
+        });
+
+        // Run single test
+        runSingleTestBtn.addEventListener('click', async () => {
+            const selected = singleTestSelect.value;
+            if (!selected) {
+                alert('Please select a test to run');
+                return;
+            }
+
+            runSingleTestBtn.disabled = true;
+            testStatus.textContent = 'Running single test...';
+            log(`Running single test: ${selected}`, 'test');
+
+            try {
+                const [category, testName] = selected.split('.');
+                const testData = systematicTestRunner.testPatterns[category][testName];
+                
+                const result = await systematicTestRunner.runSingleTest(
+                    selected, 
+                    testData, 
+                    streamingService, 
+                    testOutput
+                );
+                
+                testStatus.textContent = result.success ? 'Success' : 'Failed';
+                log(`Single test complete: ${result.success ? 'PASS' : 'FAIL'}`, 
+                    result.success ? 'success' : 'error');
+                
+            } catch (error) {
+                testStatus.textContent = 'Error';
+                log(`Single test failed: ${error.message}`, 'error');
+            } finally {
+                runSingleTestBtn.disabled = false;
+            }
+        });
+
+        // Clear results
+        clearResultsBtn.addEventListener('click', () => {
+            systematicTestRunner.reset();
+            testOutput.innerHTML = '<p>Results cleared. Ready for new tests.</p>';
+            testStatus.textContent = 'Ready';
+            progressFill.style.width = '0%';
+            testCount.textContent = '0/0';
+            updateUI([]);
+            patternsPanel.innerHTML = '<p class="log-entry info">No patterns identified yet</p>';
+            recommendationsPanel.innerHTML = '<p class="log-entry info">Run tests to get recommendations</p>';
+            log('Results cleared', 'info');
+        });
+
+        // Export results
+        exportResultsBtn.addEventListener('click', () => {
+            const summary = systematicTestRunner.getSummaryReport();
+            const blob = new Blob([JSON.stringify(summary, null, 2)], 
+                { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `firesite-test-results-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            log('Results exported', 'success');
+        });
+
+        // Initialize
+        populateTestSelect();
+        log('Diagnostic testing dashboard ready', 'success');
+    </script>
+</body>
+</html>

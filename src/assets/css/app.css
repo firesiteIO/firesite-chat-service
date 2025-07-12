@@ -1,0 +1,41 @@
+/* Firesite.ai Chat Service - Main Application CSS */
+/* Modular architecture with clean separation of concerns */
+/* 90% accuracy streaming preserved - Testing Suite CSS removed */
+
+/* Import global CSS with font declarations and variables */
+@import "./global.css";
+
+/* Component styles */
+@import "./components/navigation.css";
+@import "./components/buttons.css";
+@import "./components/alerts.css";
+@import "./components/forms.css";
+@import "./components/modals.css";
+@import "./components/footer.css";
+
+/* Feature styles */
+@import "./features/chat.css";
+@import "./features/streaming.css";
+@import "./features/export.css";
+@import "./features/mode-dropdown.css";
+@import "./features/enhanced-markdown.css";
+@import "./features/mcp-controls.css";
+
+/* Settings Panel - Slide-out from right */
+@import "./settings.css";
+
+/* Main output for chat styles */
+@import "./output.css";
+
+/* Utilities */
+@import "./utilities/animations.css";
+@import "./utilities/responsive.css";
+@import "./utilities/helpers.css";
+
+/* CLEANUP COMPLETED */
+/* Removed unused Testing Suite CSS:
+ * - .metrics-panel, .metric-item, .metric-label, .metric-value (unused in main app)
+ * - .dashboard, .metric-card, .metric-display (only used in test files)
+ * - Extracted all remaining styles to modular files
+ * - Reduced main CSS from 3,219 lines to clean modular imports
+ */

@@ -1,0 +1,45 @@
+node_modules/
+dist/
+build/
+.vite/
+coverage/
+*.min.js
+*.min.css
+.git/
+.vscode/
+.idea/
+*.log
+firebase-debug.log
+firestore-debug.log
+package-lock.json
+yarn.lock
+.firebase/
+.firebaserc
+firebase.json
+
+# Assets and media files
+*.woff
+*.woff2
+*.ttf
+*.eot
+*.svg
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.pdf
+
+# Generated files
+docs/sse_bug_reports/
+
+# Legacy files (preserve formatting during cleanup)
+**/*legacy*.js
+**/*backup*.js
+
+# Standalone demo files
+public/demos/
+
+# Generated documentation
+**/*.generated.md
+**/*.generated.html

@@ -1,0 +1,466 @@
+/**
+ * Feature Restrictions CSS
+ * Styles for Base Server restrictions and upgrade prompts
+ */
+
+/* Feature badges */
+.feature-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 0.7em;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin-left: 8px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Restricted sections */
+.settings-section.feature-restricted {
+  position: relative;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.settings-section.feature-restricted input,
+.settings-section.feature-restricted textarea,
+.settings-section.feature-restricted select {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* Restriction overlay */
+.feature-restriction-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  backdrop-filter: blur(2px);
+  z-index: 10;
+  pointer-events: all;
+}
+
+.restriction-content {
+  text-align: center;
+  padding: 20px;
+  max-width: 300px;
+}
+
+.restriction-icon {
+  font-size: 2em;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.restriction-content h4 {
+  margin: 0 0 8px 0;
+  font-size: 1.1em;
+  color: #333;
+  font-weight: 600;
+}
+
+.restriction-content p {
+  margin: 0 0 15px 0;
+  font-size: 0.9em;
+  color: #666;
+  line-height: 1.4;
+}
+
+.upgrade-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.upgrade-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.upgrade-btn:active {
+  transform: translateY(0);
+}
+
+/* Upgrade modal styles */
+.upgrade-modal-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.upgrade-feature-highlight {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f7ff 0%, #e8f0ff 100%);
+  border-radius: 12px;
+  border: 1px solid #e1e8ff;
+}
+
+.feature-icon {
+  font-size: 3em;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.upgrade-feature-highlight h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 1.4em;
+}
+
+.feature-description {
+  color: #666;
+  margin: 0;
+  font-size: 1em;
+}
+
+.upgrade-comparison {
+  margin: 30px 0;
+}
+
+.server-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.server-option {
+  border: 2px solid #e1e8ff;
+  border-radius: 12px;
+  padding: 20px;
+  background: white;
+}
+
+.server-option.current {
+  border-color: #ddd;
+  background: #f9f9f9;
+}
+
+.server-option.upgrade {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #f5f7ff 0%, #e8f0ff 100%);
+  position: relative;
+}
+
+.server-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.server-icon {
+  font-size: 1.5em;
+  margin-right: 10px;
+}
+
+.server-header h4 {
+  margin: 0;
+  font-size: 1.1em;
+  color: #333;
+  flex: 1;
+}
+
+.server-status {
+  font-size: 0.8em;
+  color: #666;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+
+.upgrade-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 0.7em;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.server-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.server-features li {
+  padding: 4px 0;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+}
+
+.server-features li strong {
+  color: #667eea;
+}
+
+.upgrade-benefits {
+  margin: 25px 0;
+  padding: 20px;
+  background: #f8fffe;
+  border-radius: 8px;
+  border-left: 4px solid #10b981;
+}
+
+.upgrade-benefits h4 {
+  margin: 0 0 15px 0;
+  color: #059669;
+  font-size: 1.1em;
+}
+
+.benefits-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.benefits-list li {
+  padding: 5px 0;
+  color: #047857;
+  font-size: 0.9em;
+}
+
+.benefits-list li:before {
+  content: "✨ ";
+  margin-right: 8px;
+}
+
+.upgrade-setup {
+  margin: 25px 0;
+  padding: 20px;
+  background: #fffbf0;
+  border-radius: 8px;
+  border-left: 4px solid #f59e0b;
+}
+
+.upgrade-setup h4 {
+  margin: 0 0 15px 0;
+  color: #d97706;
+  font-size: 1.1em;
+}
+
+.setup-steps {
+  margin: 0;
+  padding-left: 20px;
+  color: #92400e;
+}
+
+.setup-steps li {
+  padding: 5px 0;
+  font-size: 0.9em;
+}
+
+.setup-steps code {
+  background: #fef3c7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.85em;
+}
+
+.upgrade-attempt-note {
+  margin: 25px 0;
+  padding: 15px;
+  background: #fef2f2;
+  border-radius: 8px;
+  border-left: 4px solid #f87171;
+}
+
+.upgrade-attempt-note p {
+  margin: 5px 0;
+  color: #dc2626;
+  font-size: 0.9em;
+}
+
+.upgrade-attempt-note strong {
+  font-weight: 600;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .server-comparison {
+    grid-template-columns: 1fr;
+  }
+  
+  .server-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .server-status {
+    margin: 5px 0 0 0;
+  }
+  
+  .upgrade-badge {
+    margin: 5px 0 0 0;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .feature-restriction-overlay {
+    background: rgba(30, 30, 30, 0.95);
+  }
+  
+  .restriction-content h4 {
+    color: #f0f0f0;
+  }
+  
+  .restriction-content p {
+    color: #ccc;
+  }
+  
+  .server-option {
+    background: #2d2d2d;
+    border-color: #444;
+  }
+  
+  .server-option.current {
+    background: #333;
+  }
+  
+  .server-option.upgrade {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-color: #667eea;
+  }
+  
+  .server-header h4 {
+    color: #f0f0f0;
+  }
+  
+  .server-status {
+    background: #444;
+    color: #ccc;
+  }
+  
+  .server-features li {
+    color: #ddd;
+  }
+}
+
+/* Server info notes */
+.server-info-note {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #6c757d;
+}
+
+.server-info-note p {
+  margin: 0;
+  font-size: 0.85em;
+  color: #6c757d;
+  line-height: 1.4;
+}
+
+.server-info-note strong {
+  color: #495057;
+}
+
+@media (prefers-color-scheme: dark) {
+  .server-info-note {
+    background: #2d2d2d;
+    border-left-color: #999;
+  }
+  
+  .server-info-note p {
+    color: #999;
+  }
+  
+  .server-info-note strong {
+    color: #ccc;
+  }
+}
+
+/* MCP Max Authentication Section */
+.max-server-auth-section {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f7ff 0%, #e8f0ff 100%);
+  border-radius: 12px;
+  border: 1px solid #e1e8ff;
+}
+
+.max-server-auth-section h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 1.1em;
+}
+
+.max-server-auth-section .auth-description {
+  margin: 0 0 15px 0;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.max-server-auth-section .api-key-section {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e1e8ff;
+}
+
+.max-server-auth-section .api-key-help {
+  margin-top: 10px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.max-server-auth-section .api-key-help small {
+  color: #6c757d;
+  font-style: italic;
+}
+
+@media (prefers-color-scheme: dark) {
+  .max-server-auth-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-color: #444;
+  }
+  
+  .max-server-auth-section h4 {
+    color: #f0f0f0;
+  }
+  
+  .max-server-auth-section .auth-description {
+    color: #ccc;
+  }
+  
+  .max-server-auth-section .api-key-section {
+    background: #2d2d2d;
+    border-color: #444;
+  }
+  
+  .max-server-auth-section .api-key-help {
+    background: #333;
+  }
+  
+  .max-server-auth-section .api-key-help small {
+    color: #999;
+  }
+}

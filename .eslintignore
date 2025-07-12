@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.vite/
+
+# Test coverage
+coverage/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env.local
+.env.*.local
+
+# Bug reports directory
+bug-reports/
+
+# Third-party libraries
+src/lib/
+vendor/
+
+# Generated files
+*.min.js
+*.bundle.js
+
+# Documentation
+docs/
+
+# Archives
+archive/
+old/
+legacy/

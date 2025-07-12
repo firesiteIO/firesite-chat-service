@@ -1,0 +1,23 @@
+/* Utility Classes and Helpers */
+
+/* Visibility Utilities */
+.hidden { 
+  display: none !important; 
+}
+
+.visible { 
+  display: block !important; 
+}
+
+/* Spacing Utilities */
+.mb-4 { 
+  margin-bottom: 2rem; 
+}
+
+/* Raw Text Styles */
+.raw-text {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}

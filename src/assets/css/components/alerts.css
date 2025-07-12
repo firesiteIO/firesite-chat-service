@@ -1,0 +1,44 @@
+/* Status Messages and Alerts */
+
+.status {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.status.visible {
+  opacity: 1;
+}
+
+.status.info {
+  background-color: rgba(66, 153, 225, 0.1);
+  color: var(--info-color);
+  border: 1px solid rgba(66, 153, 225, 0.2);
+}
+
+.status.success {
+  background-color: rgba(72, 187, 120, 0.1);
+  color: var(--success-color);
+  border: 1px solid rgba(72, 187, 120, 0.2);
+}
+
+.status.warning {
+  background-color: rgba(237, 137, 54, 0.1);
+  color: var(--warning-color);
+  border: 1px solid rgba(237, 137, 54, 0.2);
+}
+
+.status.error {
+  background-color: rgba(245, 101, 101, 0.1);
+  color: var(--danger-color);
+  border: 1px solid rgba(245, 101, 101, 0.2);
+}
+
+.status.connected {
+  background-color: rgba(66, 184, 131, 0.1);
+  color: var(--secondary-color);
+  border: 1px solid rgba(66, 184, 131, 0.2);
+}

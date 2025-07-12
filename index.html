@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firesite Chat</title>
+    <link rel="stylesheet" href="/src/assets/css/app.css">
+    <!-- Highlight.js CSS theme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <header class="header">
+                <h1>Firesite Chat</h1>
+                <p class="tagline">AI Chat with Revolutionary Streaming • Zero Re-renders</p>
+                <div id="status" class="status"></div>
+            </header>
+
+            <main class="main-content">
+                <!-- Clean Chat Interface -->
+                <div id="chat-tab" class="tab-content active">
+                    <div class="controls">
+                        <div class="controls-header">
+                            <h2>AI Chat</h2>
+                            <div class="controls-row">
+                                <div class="mcp-controls">
+                                    <label for="mcp-server-select">MCP Server:</label>
+                                    <select id="mcp-server-select" class="control-select">
+                                        <option value="base">Base Server</option>
+                                        <option value="max">Max Server</option>
+                                    </select>
+                                </div>
+                                <div class="ai-mode-controls" style="display: none;">
+                                    <label for="ai-mode-select">AI Mode:</label>
+                                    <select id="ai-mode-select" class="control-select">
+                                        <option value="development">Developer</option>
+                                        <option value="planning">Planner</option>
+                                        <option value="testing">Tester</option>
+                                        <option value="documentation">Documenter</option>
+                                        <option value="analysis">Analyst</option>
+                                        <option value="review">Reviewer</option>
+                                        <option value="research">Researcher</option>
+                                    </select>
+                                </div>
+                                <div id="mode-dropdown-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Interface -->
+                    <div class="chat-wrapper">
+                        <div class="chat-container">
+                            <div id="streaming-chat-messages" class="chat-messages"></div>
+                        </div>
+                        <div class="chat-input">
+                            <textarea id="streaming-message-input" placeholder="Ask Claude anything..." rows="1"></textarea>
+                            <button id="streaming-send-message" class="btn btn-primary">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="footer">
+                <p>Firesite Chat • Revolutionary AI Chat with Zero Re-renders</p>
+                <p class="version-info">
+                    <span id="version">v1.0.0</span> • 
+                    <span id="timestamp"></span>
+                </p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- WebContainer verification -->
+    <script>
+        // Quick WebContainer support check
+        if (!crossOriginIsolated) {
+            console.warn('WebContainer support may be limited. Cross-origin isolation not enabled.');
+        }
+    </script>
+
+    <!-- Settings Toggle Button -->
+    <button class="settings-toggle" id="settings-toggle" aria-label="Open settings"></button>
+
+    <!-- Highlight.js loaded via ES6 imports in streaming services -->
+    
+    <!-- Main app entry point -->
+    <script type="module" src="/src/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firesite.ai Chat Service Integration Test</title>
+    
+    <!-- Firesite Chat Output Styles -->
+    <link rel="stylesheet" href="../src/assets/css/output.css">
+    <!-- Main app CSS for complete styling compatibility -->
+    <link rel="stylesheet" href="../src/assets/css/app.css">
+    <!-- Highlight.js CSS theme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            background: #fafafa;
+        }
+
+        .api-key-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+        }
+
+        .api-key-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #5a67d8;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #4b5563;
+        }
+
+        .btn:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 700px;
+        }
+
+        .live-output {
+            padding: 20px;
+            background: #fafafa;
+            border-right: 1px solid #e5e7eb;
+            overflow-y: auto;
+        }
+
+        .test-panel {
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .progress-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f3f4f6;
+            border-radius: 6px;
+        }
+
+        .progress-bar {
+            background: #e5e7eb;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            background: #667eea;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .test-item {
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border-left: 4px solid #e5e7eb;
+        }
+
+        .test-item.running {
+            background: #eff6ff;
+            border-left-color: #3b82f6;
+        }
+
+        .test-item.passed {
+            background: #f0fdf4;
+            border-left-color: #10b981;
+        }
+
+        .test-item.failed {
+            background: #fef2f2;
+            border-left-color: #ef4444;
+        }
+
+        .test-item.error {
+            background: #fffbeb;
+            border-left-color: #f59e0b;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .metric-card {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .status {
+            padding: 10px 20px;
+            background: #f3f4f6;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .warning {
+            color: #f59e0b;
+            font-weight: 500;
+        }
+
+        .success {
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        .error {
+            color: #ef4444;
+            font-weight: 500;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Firesite.ai Chat Service Integration Test</h1>
+            <p>Test our streaming parser against real Claude API responses</p>
+        </div>
+
+        <div class="controls">
+            <div class="api-key-section">
+                <label><strong>Server Connection:</strong></label>
+                <p style="font-size: 0.875rem; color: #6b7280; margin-top: 5px;">
+                    Tests will connect to your local server at <code>localhost:3001</code> which handles Claude API authentication.
+                </p>
+                <div style="margin-top: 10px; padding: 10px; background: #f0fdf4; border: 1px solid #10b981; border-radius: 4px; color: #065f46;">
+                    Server proxy configured - no API key needed
+                </div>
+            </div>
+
+            <button id="runLiveTests" class="btn btn-primary">
+                Run All Live Tests
+            </button>
+            <button id="runSingleTest" class="btn btn-primary">
+                Run Single Test
+            </button>
+            <button id="clearResults" class="btn btn-secondary">
+                Clear Results
+            </button>
+            <button id="exportResults" class="btn btn-secondary" disabled>
+               Export Results
+            </button>
+            
+            <select id="testSelect" style="margin-left: 20px; padding: 8px; border-radius: 4px; border: 1px solid #d1d5db;">
+                <option value="">Select a test...</option>
+                <option value="simple-markdown">Simple Markdown</option>
+                <option value="complex-formatting">Complex Formatting</option>
+                <option value="table-generation">Table Generation</option>
+                <option value="mixed-content">Mixed Content</option>
+                <option value="long-response">Long Response</option>
+            </select>
+        </div>
+
+        <div class="layout">
+            <div class="live-output" id="liveOutput">
+                <!-- Live test output will appear here -->
+            </div>
+
+            <div class="test-panel" id="testPanel">
+                <div class="progress-section">
+                    <h3>Test Progress</h3>
+                    <div>Status: <span id="testStatus">Ready</span></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div>Test: <span id="currentTest">None</span></div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <h3>Test Results</h3>
+                    <div id="testResults">
+                        <p style="color: #6b7280; text-align: center; padding: 20px;">
+                            No tests run yet
+                        </p>
+                    </div>
+                </div>
+
+                <div class="metrics-grid" id="metricsGrid" style="display: none;">
+                    <div class="metric-card">
+                        <div class="metric-value" id="successRate">--%</div>
+                        <div class="metric-label">Success Rate</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="avgDuration">--ms</div>
+                        <div class="metric-label">Avg Duration</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="totalTests">0</div>
+                        <div class="metric-label">Total Tests</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status" id="statusBar">
+            Ready for Firesite.ai Chat Service integration testing • Server proxy configured
+        </div>
+    </div>
+
+    <script type="module">
+        import { BreakthroughStreamingService } from '../src/services/streaming/breakthrough-streaming.service.js';
+        import { liveClaudeTestService } from '../src/services/testing/live-claude-test.service.js';
+        import { bugReportCapture } from '../src/services/debug/bug-report-capture.service.js';
+        import { domPurifyService } from '../src/services/security/dom-purify.service.js';
+
+        // UI elements
+        const runLiveTestsBtn = document.getElementById('runLiveTests');
+        const runSingleTestBtn = document.getElementById('runSingleTest');
+        const clearResultsBtn = document.getElementById('clearResults');
+        const exportResultsBtn = document.getElementById('exportResults');
+        const testSelect = document.getElementById('testSelect');
+        const liveOutput = document.getElementById('liveOutput');
+        const testStatus = document.getElementById('testStatus');
+        const progressFill = document.getElementById('progressFill');
+        const currentTest = document.getElementById('currentTest');
+        const testResults = document.getElementById('testResults');
+        const metricsGrid = document.getElementById('metricsGrid');
+        const successRate = document.getElementById('successRate');
+        const avgDuration = document.getElementById('avgDuration');
+        const totalTests = document.getElementById('totalTests');
+        const statusBar = document.getElementById('statusBar');
+
+        // Initialize the live test environment
+        async function initializeLiveTest() {
+            // Debug: Check if liveOutput exists
+            console.log('liveOutput element:', liveOutput, 'Type:', typeof liveOutput);
+            
+            // Initialize DOMPurify service for security and syntax highlighting
+            await domPurifyService.initialize();
+            
+            // Initialize streaming service with validation
+            if (!liveOutput) {
+                console.error('liveOutput element not found!');
+                throw new Error('Could not find liveOutput element');
+            }
+            
+            return new BreakthroughStreamingService(liveOutput);
+        }
+        
+        // Initialize everything
+        const streamingService = await initializeLiveTest();
+        
+        // Initialize the live test service (no API key needed)
+        liveClaudeTestService.init();
+        statusBar.textContent = 'Connected to server proxy • Ready to run live tests';
+        statusBar.className = 'status success';
+
+        // Run live tests
+        runLiveTestsBtn.addEventListener('click', async () => {
+            runLiveTestsBtn.disabled = true;
+            clearResultsBtn.disabled = true;
+            testStatus.textContent = 'Connecting to server...';
+            statusBar.textContent = 'Running Firesite.ai Chat Service integration tests via server proxy...';
+            statusBar.className = 'status';
+
+            try {
+
+                // Clear previous results
+                testResults.innerHTML = '';
+                metricsGrid.style.display = 'none';
+
+                // Run the tests with progress updates
+                const results = await liveClaudeTestService.runLiveTests(
+                    streamingService, 
+                    liveOutput,
+                    (progress) => {
+                        updateProgress(progress);
+                    }
+                );
+
+                // Display final results
+                displayResults(results);
+                exportResultsBtn.disabled = false;
+
+                testStatus.textContent = 'Complete';
+                statusBar.textContent = `Live tests complete • Success rate: ${results.successRate}%`;
+                statusBar.className = results.successRate >= 90 ? 'status success' : 'status warning';
+
+            } catch (error) {
+                console.error('Live test failed:', error);
+                testStatus.textContent = 'Error';
+                statusBar.textContent = `Test failed: ${error.message}`;
+                statusBar.className = 'status error';
+                
+                testResults.innerHTML = `
+                    <div class="test-item error">
+                        <strong>Test Error:</strong> ${error.message}
+                    </div>
+                `;
+            } finally {
+                runLiveTestsBtn.disabled = false;
+                clearResultsBtn.disabled = false;
+            }
+        });
+
+        // Run single test
+        runSingleTestBtn.addEventListener('click', async () => {
+            const selectedTest = testSelect.value;
+            if (!selectedTest) {
+                alert('Please select a test to run');
+                return;
+            }
+
+            runSingleTestBtn.disabled = true;
+            runLiveTestsBtn.disabled = true;
+            testStatus.textContent = `Running ${selectedTest}...`;
+            statusBar.textContent = `Running single test: ${selectedTest}`;
+            statusBar.className = 'status';
+
+            try {
+                // DO NOT clear output - preserve for side-by-side validation
+                
+                // Find the test in testPrompts array
+                let foundTest = liveClaudeTestService.testPrompts.find(test => test.name === selectedTest);
+                
+                if (!foundTest) {
+                    throw new Error(`Test ${selectedTest} not found in testPrompts`);
+                }
+                
+                // Run the single test - pass the foundTest object directly
+                const result = await liveClaudeTestService.runSingleLiveTest(
+                    foundTest,
+                    streamingService,
+                    liveOutput
+                );
+                
+                testStatus.textContent = result.success ? 'Complete' : 'Failed';
+                statusBar.textContent = `Single test complete: ${selectedTest} • ${result.success ? 'PASSED' : 'FAILED'}`;
+                statusBar.className = result.success ? 'status success' : 'status error';
+                
+                // Update test results panel - APPEND instead of replacing
+                const newTestResult = document.createElement('div');
+                newTestResult.innerHTML = `
+                    <div class="test-item ${result.success ? 'passed' : 'failed'}" style="margin-bottom: 10px;">
+                        <strong>${result.success ? '✅' : '❌'} ${selectedTest}</strong>
+                        <div style="font-size: 0.875rem; color: #6b7280; margin-top: 5px;">
+                            Duration: ${result.duration.toFixed(0)}ms • 
+                            Response: ${result.responseLength} chars • 
+                            DOM: ${result.finalDOM.length} chars
+                        </div>
+                    </div>
+                `;
+                
+                // Add to beginning of test results to show latest first
+                if (testResults.firstChild && testResults.firstChild.textContent !== 'No tests run yet') {
+                    testResults.insertBefore(newTestResult, testResults.firstChild);
+                } else {
+                    testResults.innerHTML = '';
+                    testResults.appendChild(newTestResult);
+                }
+                
+                // Add raw data for debugging
+                const debugInfo = document.createElement('div');
+                debugInfo.style.cssText = 'margin-top: 10px; padding: 15px; background: #f9fafb; border-radius: 6px; font-family: monospace; font-size: 0.75rem; border-left: 4px solid #3b82f6;';
+                debugInfo.innerHTML = `
+                    <h4>Debug Info: ${selectedTest}</h4>
+                    <p><strong>Test:</strong> ${selectedTest}</p>
+                    <p><strong>Prompt:</strong> ${foundTest.prompt}</p>
+                    <p><strong>Response Length:</strong> ${result.responseLength} characters</p>
+                    <p><strong>Final DOM Length:</strong> ${result.finalDOM.length} characters</p>
+                    <p><strong>Duration:</strong> ${result.duration.toFixed(0)}ms</p>
+                    <details style="margin-top: 10px;">
+                        <summary style="cursor: pointer; font-weight: bold;">Raw HTML Output (click to expand)</summary>
+                        <pre style="margin-top: 10px; padding: 10px; background: white; border: 1px solid #d1d5db; border-radius: 4px; overflow-x: auto; white-space: pre-wrap;">${result.finalDOM.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+                    </details>
+                `;
+                testResults.appendChild(debugInfo);
+                
+                // AUTO BUG REPORT: The bug report is already saved by the service
+                // We just need to show that it was saved successfully
+                if (result.bugReport) {
+                    console.log(`Bug report auto-generated and saved for test: ${selectedTest}`);
+                }
+
+            } catch (error) {
+                console.error('Single test failed:', error);
+                testStatus.textContent = 'Error';
+                statusBar.textContent = `Single test failed: ${error.message}`;
+                statusBar.className = 'status error';
+                
+                testResults.innerHTML = `
+                    <div class="test-item error">
+                        <strong>Test Error:</strong> ${error.message}
+                    </div>
+                `;
+            } finally {
+                runSingleTestBtn.disabled = false;
+                runLiveTestsBtn.disabled = false;
+            }
+        });
+
+        // Update progress during testing
+        function updateProgress(progress) {
+            const percentage = (progress.current / progress.total) * 100;
+            progressFill.style.width = `${percentage}%`;
+            currentTest.textContent = `${progress.current}/${progress.total}: ${progress.test}`;
+
+            // Add or update test result item
+            let testItem = document.getElementById(`test-${progress.test}`);
+            if (!testItem) {
+                testItem = document.createElement('div');
+                testItem.id = `test-${progress.test}`;
+                testItem.className = 'test-item';
+                testResults.appendChild(testItem);
+            }
+
+            testItem.className = `test-item ${progress.status}`;
+            
+            let statusIcon = '⏳';
+            if (progress.status === 'passed') statusIcon = '✅';
+            else if (progress.status === 'failed') statusIcon = '❌';
+            else if (progress.status === 'error') statusIcon = '⚠️';
+
+            testItem.innerHTML = `
+                <strong>${statusIcon} ${progress.test}</strong>
+                <div style="font-size: 0.875rem; color: #6b7280; margin-top: 5px;">
+                    ${progress.status === 'running' ? 'Testing...' : 
+                      progress.status === 'passed' ? 'Passed' :
+                      progress.status === 'failed' ? 'Failed' :
+                      progress.status === 'error' ? `Error: ${progress.error}` : 'Unknown'}
+                </div>
+            `;
+        }
+
+        // Display final results
+        function displayResults(results) {
+            metricsGrid.style.display = 'grid';
+            
+            successRate.textContent = `${results.successRate}%`;
+            avgDuration.textContent = `${results.averageDuration.toFixed(0)}ms`;
+            totalTests.textContent = results.totalTests;
+
+            // Add detailed results
+            const summary = liveClaudeTestService.getSummaryReport();
+            
+            const summaryDiv = document.createElement('div');
+            summaryDiv.style.marginTop = '20px';
+            summaryDiv.innerHTML = `
+                <h4>Element Coverage</h4>
+                <div style="font-size: 0.875rem; margin-top: 10px;">
+                    ${Object.entries(summary.coverage).map(([element, coverage]) => 
+                        `<div>• ${element}: ${(coverage * 100).toFixed(0)}%</div>`
+                    ).join('')}
+                </div>
+                
+                ${summary.issues.length > 0 ? `
+                    <h4 style="margin-top: 15px;">Common Issues</h4>
+                    <div style="font-size: 0.875rem; margin-top: 10px;">
+                        ${summary.issues.map(issue => 
+                            `<div>• ${issue.issue} (${issue.count}x)</div>`
+                        ).join('')}
+                    </div>
+                ` : ''}
+                
+                ${summary.recommendations.length > 0 ? `
+                    <h4 style="margin-top: 15px;">Recommendations</h4>
+                    <div style="font-size: 0.875rem; margin-top: 10px;">
+                        ${summary.recommendations.map(rec => 
+                            `<div>• ${rec}</div>`
+                        ).join('')}
+                    </div>
+                ` : ''}
+            `;
+            
+            testResults.appendChild(summaryDiv);
+        }
+
+        // Clear results
+        clearResultsBtn.addEventListener('click', () => {
+            // Restore original container reference
+            streamingService.container = liveOutput;
+            
+            liveOutput.innerHTML = '';
+            testResults.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 20px;">No tests run yet</p>';
+            testStatus.textContent = 'Ready';
+            progressFill.style.width = '0%';
+            currentTest.textContent = 'None';
+            metricsGrid.style.display = 'none';
+            exportResultsBtn.disabled = true;
+            statusBar.textContent = 'Results cleared • Ready for new tests with preserved output';
+            statusBar.className = 'status';
+        });
+
+        // Export results
+        exportResultsBtn.addEventListener('click', () => {
+            const summary = liveClaudeTestService.getSummaryReport();
+            const blob = new Blob([JSON.stringify(summary, null, 2)], 
+                { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `live-claude-test-results-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+</html>

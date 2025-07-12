@@ -1,0 +1,320 @@
+/* Chat Container and Messages */
+
+/* Message Content Styles */
+.message-content {
+  width: 95%;
+  max-width: 95%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  line-height: 1.6;
+}
+
+.message-content:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.user .message-content {
+  background-color: var(--primary-color);
+  color: white;
+  border-bottom-right-radius: 0.25rem;
+}
+
+.assistant .message-content {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-bottom-left-radius: 0.25rem;
+  position: relative;
+  padding-right: 60px; /* Make room for copy button */
+}
+
+/* Timestamp for messages */
+.message-timestamp {
+  position: absolute;
+  bottom: -18px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.chat-message:hover .message-timestamp {
+  opacity: 1;
+}
+
+.user .message-timestamp {
+  right: 0;
+}
+
+.assistant .message-timestamp {
+  left: 48px;
+}
+
+/* Scroll Mode Indicator */
+.chat-container .scroll-mode-indicator {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  font-size: 0.55rem;
+  color: var(--text-secondary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.chat-container .scroll-mode-indicator.visible {
+  opacity: 1;
+}
+
+.chat-container .scroll-mode-indicator.auto {
+  background-color: rgba(72, 187, 120, 0.1);
+  color: var(--success-color);
+  border-color: rgba(72, 187, 120, 0.2);
+}
+
+.chat-container .scroll-mode-indicator.manual {
+  background-color: rgba(237, 137, 54, 0.1);
+  color: var(--warning-color);
+  border-color: rgba(237, 137, 54, 0.2);
+}
+
+.chat-container .scroll-mode-indicator.paused {
+  background-color: rgba(245, 101, 101, 0.1);
+  color: var(--danger-color);
+  border-color: rgba(245, 101, 101, 0.2);
+}
+
+/* Scroll to Bottom Button */
+.chat-container .scroll-to-bottom {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  z-index: 50;
+}
+
+.chat-container .scroll-to-bottom:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+/* Chat Container - Integrated into streaming tab */
+.chat-wrapper {
+  display: relative;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-bottom: 0;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Conversation Browser */
+.conversation-browser {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 1.5rem;
+  height: 600px;
+}
+
+.browser-sidebar {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.browser-sidebar h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+}
+
+.conversation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.conversation-item {
+  padding: 0.75rem;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.conversation-item:hover {
+  background-color: var(--bg-primary);
+  border-color: var(--primary-color);
+}
+
+.conversation-item.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.conversation-item-title {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.conversation-item-date {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.conversation-item-preview {
+  font-size: 0.875rem;
+  opacity: 0.8;
+  margin-top: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browser-content {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.conversation-preview {
+  height: 100%;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 3rem;
+  font-style: italic;
+}
+
+.conversation-meta {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.conversation-messages {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 1.5rem;
+}
+
+.conversation-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Chat Group Styles */
+.chat-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.chat-group[data-hidden="true"] {
+  display: none !important;
+}
+
+/* Chat Message Styles */
+.chat-message {
+  display: flex;
+  gap: 1rem;
+  animation: messageSlide 0.3s ease;
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
+@keyframes messageSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-message.user {
+  justify-content: flex-start;
+}
+
+.chat-message.assistant {
+  justify-content: flex-start;
+}
+
+/* Message avatars for visual distinction */
+.chat-message::before {
+  content: '';
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.chat-message.user::before {
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  content: '👤';
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.chat-message.assistant::before {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  justify-content: center;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='rgb(217, 119, 87)' d='m19.622 66.5 19.675-11.034.325-.966-.325-.538h-.973l-3.297-.2-11.243-.302-9.73-.4-9.46-.502-2.378-.502L0 49.097l.216-1.454 2-1.354 2.865.25 6.324.452 9.514.652 6.865.401L38 49.097h1.622l.216-.652-.54-.4-.433-.402-9.838-6.67-10.649-7.021-5.567-4.062-2.973-2.056-1.514-1.906-.648-4.213 2.702-3.009 3.676.25.919.252 3.73 2.858 7.946 6.169 10.378 7.623 1.514 1.253.609-.411.093-.29-.703-1.154-5.621-10.18-6-10.382-2.703-4.313-.703-2.558c-.272-1.073-.432-1.96-.432-3.059L26.162.552 27.892 0l4.162.552 1.73 1.504 2.594 5.918 4.163 9.278 6.486 12.638 1.892 3.761 1.027 3.46.378 1.053h.649v-.601l.54-7.122.974-8.726.972-11.234.325-3.159 1.567-3.811 3.136-2.057 2.432 1.154 2 2.858-.27 1.856-1.19 7.723-2.324 12.086-1.513 8.125h.864l1.028-1.053 4.108-5.417 6.865-8.626 3.026-3.41 3.568-3.761 2.27-1.805h4.325l3.135 4.714-1.406 4.864-4.432 5.617-3.676 4.764-5.27 7.061-3.27 5.678.293.468.788-.067 11.892-2.558 6.432-1.153 7.676-1.304 3.46 1.605.378 1.655-1.352 3.36-8.216 2.006-9.621 1.956-14.328 3.372-.159.128.187.278 6.462.585 2.756.15h6.757l12.595.953 3.297 2.156L100 60.13l-.324 2.057-5.081 2.557-6.811-1.605-15.946-3.811-5.46-1.354h-.756v.451l4.54 4.464 8.379 7.522 10.432 9.73.54 2.407-1.35 1.905-1.406-.2-9.19-6.921L74 74.222l-8-6.77h-.54v.703l1.837 2.708 9.784 14.694.487 4.513-.703 1.455-2.54.902-2.757-.501-5.784-8.074-5.892-9.028-4.757-8.124-.574.363-2.831 30.229-1.298 1.555L47.405 100l-2.54-1.906-1.352-3.109 1.352-6.168 1.621-8.025 1.298-6.369 1.189-7.924.726-2.647-.064-.177-.58.098-5.974 8.193L34 84.253l-7.19 7.673-1.729.702-2.973-1.555.27-2.758 1.676-2.457L34 73.22l6-7.874 3.95-4.646-.1-.45-.234-.096-26.427 17.228-4.703.602-2.054-1.906.27-3.11.974-1.002z'%3E%3C/path%3E%3C/svg%3E");
+}
