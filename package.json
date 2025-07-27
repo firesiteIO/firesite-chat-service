@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.20.0",
+    "@firesite/service-registry": "^0.1.0",
     "@webcontainer/api": "^1.1.9",
     "cors": "^2.8.5",
     "dompurify": "^3.2.6",
@@ -26,11 +27,11 @@
     "highlight.js": "^11.9.0"
   },
   "devDependencies": {
-    "eslint": "^8.57.0",
-    "vite": "^5.1.0",
-    "vitest": "^1.2.0",
     "@vitest/coverage-v8": "^1.2.0",
-    "jsdom": "^23.0.0"
+    "eslint": "^8.57.0",
+    "jsdom": "^23.0.0",
+    "vite": "^5.1.0",
+    "vitest": "^1.2.0"
   },
   "engines": {
     "node": ">=18.0.0"

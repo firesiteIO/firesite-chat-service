@@ -1,0 +1,17 @@
+{
+  "name": "chat-service",
+  "preferredPort": 5174,
+  "portRange": [5174, 5180],
+  "startCommand": "npm run dev",
+  "healthEndpoint": "/health",
+  "dependencies": ["mcp-max"],
+  "productionUrl": "https://chat.firesite.ai",
+  "environment": "development",
+  "services": {
+    "vite": {
+      "enabled": true,
+      "port": 5173,
+      "description": "Frontend Vite dev server"
+    }
+  }
+}

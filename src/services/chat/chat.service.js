@@ -114,6 +114,9 @@ export class ChatService {
    * Initialize AI provider based on connection mode
    */
   async initializeAIProvider() {
+    // Ensure MCP server manager is initialized
+    await mcpServerManager.ensureInitialized();
+    
     // Check if MCP Max server is connected and available
     const mcpStatus = mcpServerManager.getStatus();
     
@@ -126,14 +129,18 @@ export class ChatService {
         createStream: (message, options) => this.createMCPMaxStream(message, options)
       };
       console.log('🎯 Using MCP Max server for AI responses');
-    } else if (this.connectionMode === 'mcp') {
+    } else if (this.connectionMode === 'mcp' || (mcpStatus.isConnected && mcpStatus.mode === 'base')) {
+      console.log('🎯 Attempting to use MCP proxy service (base mode)');
       try {
         // Try to use MCP proxy service
         this.aiProvider = mcpProxyService;
         if (!mcpProxyService.isReady()) {
           await mcpProxyService.initialize();
         }
+        console.log('✅ Successfully initialized MCP proxy service');
       } catch (error) {
+        console.error('Failed to initialize MCP proxy service:', error);
+        console.log('Falling back to direct Anthropic service');
         this.connectionMode = 'direct';
         this.aiProvider = anthropicDirectService;
       }

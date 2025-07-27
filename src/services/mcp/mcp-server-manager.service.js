@@ -4,6 +4,8 @@
  * while maintaining seamless chat service integration
  */
 
+// Removed service-registry import - can't use fs in browser
+
 export class MCPServerManager {
   constructor(options = {}) {
     this.options = {
@@ -16,7 +18,7 @@ export class MCPServerManager {
     };
 
     this.currentMode = this.options.defaultMode;
-    this.currentServerUrl = this.getCurrentServerUrl();
+    this.currentServerUrl = null; // Will be set dynamically
     this.isConnected = false;
     this.eventSource = null;
     this.sessionId = null;
@@ -30,9 +32,18 @@ export class MCPServerManager {
     this.initialize();
   }
 
-  initialize() {
-    console.log(`🚀 MCP Server Manager initialized in ${this.currentMode} mode`);
+  async initialize() {
+    console.log(`🚀 MCP Server Manager initializing in ${this.currentMode} mode`);
+    
+    // Get initial server URL from registry
+    this.currentServerUrl = await this.getCurrentServerUrl();
     console.log(`📡 Server URL: ${this.currentServerUrl}`);
+    
+    // Test the connection immediately
+    if (this.currentServerUrl) {
+      this.isConnected = await this.testServerConnection();
+      console.log(`📡 Connection status: ${this.isConnected ? 'Connected' : 'Not connected'}`);
+    }
   }
 
   /**
@@ -53,7 +64,7 @@ export class MCPServerManager {
 
       // Update configuration
       this.currentMode = mode;
-      this.currentServerUrl = this.getCurrentServerUrl();
+      this.currentServerUrl = await this.getCurrentServerUrl();
 
       // Test connection to new server
       const isAvailable = await this.testServerConnection();
@@ -62,7 +73,7 @@ export class MCPServerManager {
         // Fallback to previous server
         console.warn(`❌ ${mode} server unavailable, falling back to ${previousMode}`);
         this.currentMode = previousMode;
-        this.currentServerUrl = this.getCurrentServerUrl();
+        this.currentServerUrl = await this.getCurrentServerUrl();
         return false;
       }
 
@@ -82,9 +93,19 @@ export class MCPServerManager {
       
       // Restore previous configuration
       this.currentMode = previousMode;
-      this.currentServerUrl = this.getCurrentServerUrl();
+      this.currentServerUrl = await this.getCurrentServerUrl();
       return false;
     }
+  }
+
+  /**
+   * Ensure the manager is properly initialized and connected
+   */
+  async ensureInitialized() {
+    if (!this.currentServerUrl) {
+      await this.initialize();
+    }
+    return this.isConnected;
   }
 
   /**
@@ -114,11 +135,41 @@ export class MCPServerManager {
 
   /**
    * Get current server URL based on mode
+   * Try to discover from CLI registry via API, fallback to defaults
    */
-  getCurrentServerUrl() {
-    return this.currentMode === 'max' ? 
-      this.options.maxServerUrl : 
-      this.options.baseServerUrl;
+  async getCurrentServerUrl() {
+    try {
+      // Try to get port from CLI's service registry API endpoint
+      const serviceName = this.currentMode === 'max' ? 'mcp-max' : 'mcp-basic';
+      
+      // First try the MCP Basic server's registry endpoint
+      try {
+        const response = await fetch('http://localhost:3001/api/registry');
+        if (response.ok) {
+          const registry = await response.json();
+          const service = registry.services?.[serviceName];
+          if (service && service.port) {
+            const url = `http://localhost:${service.port}`;
+            console.log(`📡 Discovered ${serviceName} running on port ${service.port}`);
+            return url;
+          }
+        }
+      } catch (error) {
+        // Registry API not available, continue to fallback
+      }
+      
+      // Fallback to default ports
+      console.log(`Using default port for ${serviceName}`);
+      return this.currentMode === 'max' ? 
+        this.options.maxServerUrl : 
+        this.options.baseServerUrl;
+    } catch (error) {
+      // Fallback to default ports if anything fails
+      console.warn(`Failed to discover ${this.currentMode} server port, using default`);
+      return this.currentMode === 'max' ? 
+        this.options.maxServerUrl : 
+        this.options.baseServerUrl;
+    }
   }
 
   /**

@@ -4,6 +4,7 @@
  */
 
 import { globalEvents } from '../../core/events/event-emitter.js';
+// Removed service-registry import - can't use fs in browser
 
 export class McpProxyService {
   constructor(options = {}) {
@@ -20,33 +21,83 @@ export class McpProxyService {
   }
   
   /**
-   * Initialize the MCP proxy service
+   * Initialize the MCP proxy service with retry logic
    */
   async initialize() {
     console.log('Initializing MCP Proxy Service...');
     
-    try {
-      // Test connection to MCP server
-      const response = await fetch(`${this.options.baseUrl}/health`);
-      
-      if (!response.ok) {
-        throw new Error(`MCP server not responding: ${response.status}`);
+    let lastError = null;
+    
+    for (let attempt = 1; attempt <= this.options.retries; attempt++) {
+      try {
+        console.log(`Attempting to connect to MCP server (attempt ${attempt}/${this.options.retries})...`);
+        
+        // Try to discover MCP Basic port from registry API
+        let baseUrl = this.options.baseUrl;
+        try {
+          // First attempt to get registry from MCP Basic itself
+          const registryResponse = await fetch(`${baseUrl}/api/registry`);
+          if (registryResponse.ok) {
+            const registry = await registryResponse.json();
+            const mcpBasic = registry.services?.['mcp-basic'];
+            if (mcpBasic && mcpBasic.port) {
+              baseUrl = `http://localhost:${mcpBasic.port}`;
+              console.log(`Discovered MCP Basic server on port ${mcpBasic.port} from registry`);
+            }
+          }
+        } catch (error) {
+          console.log('Registry API not available, using default port:', baseUrl);
+        }
+        
+        // Test connection to MCP server with timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.options.timeout);
+        
+        const response = await fetch(`${baseUrl}/health`, {
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          throw new Error(`MCP server not responding: ${response.status}`);
+        }
+        
+        const health = await response.json();
+        console.log('MCP Server health:', health);
+        
+        // Store the discovered base URL for future requests
+        this.options.baseUrl = baseUrl;
+        
+        this.initialized = true;
+        console.log('MCP Proxy Service initialized successfully with URL:', baseUrl);
+        
+        // Listen for model changes
+        this.setupEventListeners();
+        
+        return this;
+        
+      } catch (error) {
+        lastError = error;
+        
+        if (attempt < this.options.retries) {
+          const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000); // Exponential backoff, max 5s
+          console.warn(`MCP server not ready (attempt ${attempt}/${this.options.retries}), retrying in ${delay}ms...`);
+          await this._delay(delay);
+        } else {
+          console.error('Failed to initialize MCP Proxy Service after all retries:', error);
+        }
       }
-      
-      const health = await response.json();
-      console.log('MCP Server health:', health);
-      
-      this.initialized = true;
-      console.log('MCP Proxy Service initialized successfully');
-      
-      // Listen for model changes
-      this.setupEventListeners();
-      
-      return this;
-    } catch (error) {
-      console.error('Failed to initialize MCP Proxy Service:', error);
-      throw new Error(`MCP server connection failed: ${error.message}. Make sure the Firesite MCP server is running on ${this.options.baseUrl}`);
     }
+    
+    throw new Error(`MCP server connection failed after ${this.options.retries} attempts: ${lastError.message}. Make sure the Firesite MCP server is running on ${this.options.baseUrl}`);
+  }
+
+  /**
+   * Helper method for delays
+   */
+  _delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
   
   /**

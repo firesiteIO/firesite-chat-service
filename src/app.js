@@ -85,8 +85,10 @@ async function initializeServices() {
   // Initialize MCP Proxy service for CORS-free access
   try {
     app.services.mcpProxy = await mcpProxyService.initialize();
+    console.log('MCP Proxy service initialized successfully');
   } catch (error) {
-    console.warn('MCP Proxy service not available:', error.message);
+    console.warn('MCP Proxy service not available during initial startup:', error.message);
+    console.log('Chat service will attempt to reconnect to MCP when needed');
     app.services.mcpProxy = null;
   }
   

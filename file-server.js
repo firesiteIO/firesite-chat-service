@@ -9,6 +9,9 @@ import path from 'path';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 
+// Import service registry for CLI integration
+import { registerService, unregisterService } from './utils/service-registry.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -96,11 +99,46 @@ async function startServer() {
       console.log(`File server running on http://localhost:${PORT}`);
       console.log(`Bug reports will be saved to: ${BUG_REPORTS_DIR}`);
       console.log(`Health check: http://localhost:${PORT}/health`);
+      
+      // Register with Firesite CLI registry as chat-service
+      try {
+        registerService('chat-service', PORT, process.pid, '/health');
+        console.log('Registered with Firesite CLI registry as: chat-service');
+        console.log('Note: Frontend runs on Vite port 5173, backend/health on port 5174');
+      } catch (error) {
+        console.warn('Failed to register with CLI registry:', error.message);
+      }
     });
   } catch (error) {
     console.error('Failed to start file server:', error);
     process.exit(1);
   }
 }
+
+// Setup cleanup handlers for graceful shutdown
+const cleanup = () => {
+  console.log('Shutting down file server...');
+  
+  // Unregister from CLI registry
+  try {
+    unregisterService('chat-service');
+    console.log('Successfully unregistered from CLI registry');
+  } catch (error) {
+    console.error('Failed to unregister from CLI registry:', error.message);
+  }
+  
+  process.exit(0);
+};
+
+// Register cleanup handlers
+process.on('SIGINT', cleanup);
+process.on('SIGTERM', cleanup);
+process.on('exit', () => {
+  try {
+    unregisterService('chat-service');
+  } catch (error) {
+    // Silent fail on exit
+  }
+});
 
 startServer();
