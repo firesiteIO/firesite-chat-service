@@ -517,7 +517,7 @@ CAPTURE METADATA:
           color: #374151;
         ">
           <strong>Move it to:</strong><br>
-          /Users/thomasbutler/Documents/Firesite/<br>firesite-chat-service/docs/sse_bug_reports/
+          /Users/thomasbutler/development/Firesite/<br>firesite-chat-service/docs/sse_bug_reports/
         </div>
         <button onclick="this.parentElement.parentElement.remove()" style="
           background: #3b82f6;

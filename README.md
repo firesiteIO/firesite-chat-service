@@ -130,15 +130,15 @@ PACP (Personal AI Context Profile)
 ### **Development Setup**
 ```bash
 # Terminal 1: MCP Base Server (Basic AI functionality)
-cd /Users/thomasbutler/Documents/Firesite/firesite-mcp
+cd /Users/thomasbutler/development/Firesite/firesite-mcp
 npm run dev  # Runs on http://localhost:3001
 
 # Terminal 2: MCP Max Server (Context-aware AI with sessions)
-cd /Users/thomasbutler/Documents/Firesite/firesite-mcp-max
+cd /Users/thomasbutler/development/Firesite/firesite-mcp-max
 npm run dev  # Runs on http://localhost:3002
 
 # Terminal 3: Chat Service (Main application)
-cd /Users/thomasbutler/Documents/Firesite/firesite-chat-service
+cd /Users/thomasbutler/development/Firesite/firesite-chat-service
 npm run dev  # Runs on http://localhost:5173
 ```
 
