@@ -255,24 +255,26 @@
 
 ## 📅 NEXT SESSION PRIORITIES
 
-### **KANBAN PROJECT INTEGRATION** (Ready to Begin!)
-1. **Firesite Project Service Integration**: Deploy chat service with Kanban system
-2. **MCP Max Task Management**: Integrate task creation/management through Claude
-3. **Project Context**: Implement project-specific MMCO objects
-4. **Team Collaboration**: Multi-user context sharing and synchronization
+### **CHAT SERVICE MCP BRIDGE** (Critical Blocker!)
+1. **MCP Integration Design**: Architecture for Chat Service tool execution
+2. **Tool Execution Implementation**: Enable actual tools in Chat Service (not simulation)
+3. **Integration Registry Access**: Make Chat Service aware of registered tools
+4. **Authentication Flow**: Secure tool access from Chat Service interface
 
-### **Advanced Features Development**
-1. **Production Deployment**: Move to production Firebase infrastructure
-2. **Advanced Context Objects**: Enhanced MMCO/UACP/PACP functionality
-3. **Monitoring & Analytics**: Usage tracking and performance monitoring
-4. **Security Hardening**: Production-grade security implementation
+### **Technical Debt Resolution**
+1. **Remove Hard-coded Logic**: Extract Slack tools from MCP Max stream handler
+2. **Service-First Architecture**: Design universal tool integration framework
+3. **Persistent Registry**: Move integration registry to database storage
+4. **Tool Execution Engine**: Create robust tool calling and error handling
 
-### **Ecosystem Expansion**
-1. **Service Registry Enhancements**: Advanced service discovery features
-2. **Cross-Service Communication**: Enhanced inter-service messaging
-3. **Docker Integration**: Containerized tool execution environment
-4. **API Documentation**: Comprehensive developer documentation
+### **Production Architecture Evolution**
+1. **Protocol Compliance**: Implement proper MCP standard compliance
+2. **Multi-Tool Support**: Design framework supporting ANY MCP tool type
+3. **Security Enhancement**: Secure token storage and multi-user tool access
+4. **Performance Optimization**: Optimize tool execution and response handling
 
-**Status**: 🎯 **KANBAN READY** - Full service integration complete
-**Achievement**: Complete Firesite ecosystem with dynamic service discovery
-**Next Phase**: Kanban project management system development with AI assistance
+**Status**: 🚫 **MCP BRIDGE REQUIRED** - Chat Service cannot execute tools
+**Limitation**: Tool simulation vs execution gap blocks real integration
+**Next Phase**: Enable actual tool execution from Chat Service interface
+
+**Critical Understanding**: While MCP Max server can execute tools via CLI, Chat Service integration remains incomplete due to architecture limitations that must be resolved before any production deployment.

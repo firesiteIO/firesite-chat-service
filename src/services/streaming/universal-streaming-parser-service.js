@@ -369,43 +369,44 @@ export class UniversalStreamingParser {
 
   finalize() {
     const instructions = [];
-    
+
     // Handle any pending table headers that weren't emitted during streaming
     if (this.tableHeaders.length > 0 && !this.inTable) {
-      instructions.push({ 
-        type: 'start_table', 
-        headers: this.tableHeaders 
+      instructions.push({
+        type: 'start_table',
+        headers: this.tableHeaders
       });
       instructions.push({ type: 'end_table' });
       this.tableHeaders = [];
     }
-    
-    // End current paragraph if we have content
-    if (this.currentParagraph.trim()) {
-      instructions.push({ 
-        type: 'paragraph', 
-        content: this.parseInlineMarkdown(this.currentParagraph.trim())
-      });
-    }
-    
+
     // Close any open table
     if (this.inTable) {
       instructions.push({ type: 'end_table' });
     }
-    
-    // Process any remaining buffer content through normal parsing logic
+
+    // Process any remaining buffer content FIRST — processLine may write new
+    // content into this.currentParagraph as a side effect. currentParagraph
+    // must be emitted AFTER this step so nothing is lost.
     if (this.buffer.trim()) {
       if (this.state === 'code_block') {
         instructions.push({ type: 'code_line', content: this.buffer, raw: true });
         instructions.push({ type: 'end_code_block' });
       } else {
-        // CRITICAL FIX: Process remaining buffer through normal line parsing
-        // This ensures list items don't get converted to paragraphs
         const remainingInstructions = this.processLine(this.buffer);
         instructions.push(...remainingInstructions);
       }
     }
-    
+
+    // Emit currentParagraph AFTER buffer processing — it may have been
+    // populated or updated by processLine above.
+    if (this.currentParagraph.trim()) {
+      instructions.push({
+        type: 'paragraph',
+        content: this.parseInlineMarkdown(this.currentParagraph.trim())
+      });
+    }
+
     return instructions;
   }
 }

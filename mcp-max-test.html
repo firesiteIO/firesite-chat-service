@@ -308,21 +308,21 @@
 
         async function handleConnect() {
             const serverMode = elements.serverSelect.value;
-            updateOutput('connectionOutput', \`Connecting to \${serverMode} server...\`);
+            updateOutput('connectionOutput', `Connecting to ${serverMode} server...`);
             
             try {
                 const success = await streamingService.switchMCPServer(serverMode);
                 
                 if (success) {
-                    updateConnectionStatus(true, \`Connected to \${serverMode} server\`);
-                    updateOutput('connectionOutput', \`✅ Successfully connected to \${serverMode} server\`);
+                    updateConnectionStatus(true, `Connected to ${serverMode} server`);
+                    updateOutput('connectionOutput', `✅ Successfully connected to ${serverMode} server`);
                 } else {
                     updateConnectionStatus(false, 'Connection failed');
-                    updateOutput('connectionOutput', \`❌ Failed to connect to \${serverMode} server\`);
+                    updateOutput('connectionOutput', `❌ Failed to connect to ${serverMode} server`);
                 }
             } catch (error) {
                 updateConnectionStatus(false, 'Connection error');
-                updateOutput('connectionOutput', \`💥 Error: \${error.message}\`);
+                updateOutput('connectionOutput', `💥 Error: ${error.message}`);
             }
         }
 
@@ -342,26 +342,26 @@
                     context: status.context
                 };
                 
-                updateOutput('connectionOutput', \`📊 Connection Test Results:\\n\${JSON.stringify(result, null, 2)}\`);
+                updateOutput('connectionOutput', `📊 Connection Test Results:\n${JSON.stringify(result, null, 2)}`);
             } catch (error) {
-                updateOutput('connectionOutput', \`💥 Test failed: \${error.message}\`);
+                updateOutput('connectionOutput', `💥 Test failed: ${error.message}`);
             }
         }
 
         async function handleSetAIMode() {
             const mode = elements.aiModeSelect.value;
-            updateOutput('aiModeOutput', \`Setting AI mode to: \${mode}...\`);
+            updateOutput('aiModeOutput', `Setting AI mode to: ${mode}...`);
             
             try {
                 const success = await streamingService.setAIMode(mode);
                 
                 if (success) {
-                    updateOutput('aiModeOutput', \`✅ AI mode set to: \${mode}\`);
+                    updateOutput('aiModeOutput', `✅ AI mode set to: ${mode}`);
                 } else {
-                    updateOutput('aiModeOutput', \`❌ Failed to set AI mode (Max server required)\`);
+                    updateOutput('aiModeOutput', `❌ Failed to set AI mode (Max server required)`);
                 }
             } catch (error) {
-                updateOutput('aiModeOutput', \`💥 Error: \${error.message}\`);
+                updateOutput('aiModeOutput', `💥 Error: ${error.message}`);
             }
         }
 
@@ -371,7 +371,7 @@
             
             currentMMCOContext = sampleMMCOContexts[preset];
             elements.mmcoPreview.textContent = JSON.stringify(currentMMCOContext, null, 2);
-            updateOutput('mmcoOutput', \`📋 Loaded MMCO preset: \${preset}\`);
+            updateOutput('mmcoOutput', `📋 Loaded MMCO preset: ${preset}`);
         }
 
         async function handleSendMMCO() {
@@ -391,7 +391,7 @@
                     updateOutput('mmcoOutput', '❌ Failed to send MMCO context (Max server required)');
                 }
             } catch (error) {
-                updateOutput('mmcoOutput', \`💥 Error: \${error.message}\`);
+                updateOutput('mmcoOutput', `💥 Error: ${error.message}`);
             }
         }
 
@@ -403,7 +403,7 @@
             elements.uacpPreview.textContent = typeof currentUACPContext === 'string' ? 
                 currentUACPContext.substring(0, 500) + '...' : 
                 JSON.stringify(currentUACPContext, null, 2);
-            updateOutput('uacpOutput', \`🏢 Loaded UACP preset: \${preset}\`);
+            updateOutput('uacpOutput', `🏢 Loaded UACP preset: ${preset}`);
         }
 
         async function handleSendUACP() {
@@ -423,7 +423,7 @@
                     updateOutput('uacpOutput', '❌ Failed to send UACP context (Max server required)');
                 }
             } catch (error) {
-                updateOutput('uacpOutput', \`💥 Error: \${error.message}\`);
+                updateOutput('uacpOutput', `💥 Error: ${error.message}`);
             }
         }
 
@@ -434,7 +434,7 @@
                 return;
             }
             
-            updateOutput('integrationOutput', '🚀 Running full integration test...\\n');
+            updateOutput('integrationOutput', '🚀 Running full integration test...\n');
             
             try {
                 // Add test message to chat
@@ -446,7 +446,7 @@
                 
                 updateOutput('integrationOutput', '✅ Integration test completed - check chat response area');
             } catch (error) {
-                updateOutput('integrationOutput', \`💥 Integration test failed: \${error.message}\`);
+                updateOutput('integrationOutput', `💥 Integration test failed: ${error.message}`);
             }
         }
 
@@ -473,20 +473,20 @@
         }
 
         function updateConnectionStatus(connected, message) {
-            elements.connectionStatus.className = \`status-indicator \${connected ? 'status-connected' : 'status-disconnected'}\`;
-            elements.connectionStatus.innerHTML = \`
+            elements.connectionStatus.className = `status-indicator ${connected ? 'status-connected' : 'status-disconnected'}`;
+            elements.connectionStatus.innerHTML = `
                 <div class="status-dot"></div>
-                \${message}
-            \`;
+                ${message}
+            `;
         }
 
         function addTestMessage(message) {
             const messageElement = document.createElement('div');
             messageElement.className = 'test-message';
-            messageElement.innerHTML = \`
+            messageElement.innerHTML = `
                 <strong>Test Message:</strong><br>
-                \${message}
-            \`;
+                ${message}
+            `;
             testContainer.appendChild(messageElement);
         }
 

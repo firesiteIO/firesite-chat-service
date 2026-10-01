@@ -4,7 +4,8 @@
   "description": "Firesite Chat - AI Chat with Revolutionary Streaming and Zero Re-renders",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run lsto:check && vite",
+    "dev:safe": "npm run lsto:check && npm run dev",
     "dev:debug": "npm run file-server & npm run dev",
     "file-server": "node file-server.js",
     "build": "vite build",
@@ -14,11 +15,14 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src --ext .js",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "lsto:check": "node /Users/thomasbutler/development/Firesite/.claude/lsto-enforcer.js",
+    "lsto:update": "node /Users/thomasbutler/development/Firesite/.claude/lsto-update.js",
+    "lsto:start": "npm run lsto:check && echo 'LSTO Protocol: Ready to begin development'"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.20.0",
-    "@firesite/service-registry": "^0.1.0",
+    "@firesite/service-registry": "file:../firesite-service-registry",
     "@webcontainer/api": "^1.1.9",
     "cors": "^2.8.5",
     "dompurify": "^3.2.6",

@@ -238,9 +238,19 @@ export class IntelligentProgressiveReplayService {
    * This happens continuously as elements become ready
    */
   async streamAvailableElements() {
-    while (this.completionQueue.length > 0) {
-      const element = this.completionQueue.shift();
-      await this.streamElement(element);
+    // Guard against concurrent calls — only one streaming loop may run at a time.
+    // Without this, processElements() and the analysis cycle timer can both enter
+    // this loop simultaneously, causing multiple paragraph elements to animate
+    // at the same time (the simultaneous animation bug).
+    if (this._streamingElements) return;
+    this._streamingElements = true;
+    try {
+      while (this.completionQueue.length > 0) {
+        const element = this.completionQueue.shift();
+        await this.streamElement(element);
+      }
+    } finally {
+      this._streamingElements = false;
     }
   }
 

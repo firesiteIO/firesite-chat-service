@@ -292,7 +292,7 @@
 
 /* Message avatars for visual distinction */
 .chat-message::before {
-  content: '';
+  content: "";
   width: 24px;
   height: 24px;
   border-radius: 50%;
@@ -306,7 +306,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  content: '👤';
+  content: "👤";
   font-size: 16px;
   margin-top: 10px;
 }
